@@ -1,0 +1,46 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Principal.Master.cs" Inherits="Pasalo1.Principal" %>
+
+<!DOCTYPE html>
+<html lang="es">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PÁSALO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet" />
+    <link href="~/Content/pasalo.css" rel="stylesheet" runat="server" />
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+        <header class="barra">
+            <a class="logo" href="Default.aspx" aria-label="PÁSALO, ir al inicio">
+                <span class="logo-marca"><i class="ti ti-recycle" aria-hidden="true"></i></span>
+                PÁSALO
+            </a>
+
+            <div class="buscador">
+                <asp:Label ID="lblBuscar" runat="server" AssociatedControlID="txtBuscar" CssClass="solo-lectores" Text="Buscar objetos" />
+                <i class="ti ti-search" aria-hidden="true"></i>
+                <asp:TextBox ID="txtBuscar" runat="server" placeholder="Buscar libros, apuntes, calculadoras…" />
+            </div>
+
+            <nav class="menu" aria-label="Principal">
+                <a href="Default.aspx" aria-current="page">Catálogo</a>
+                <a href="#">Mi actividad</a>
+                <a href="#">Chat</a>
+                <button type="button" class="icono-btn" aria-label="Notificaciones"><i class="ti ti-bell" aria-hidden="true"></i></button>
+                <span class="usuario"><span class="avatar" aria-hidden="true">S</span>Hola, Sofía</span>
+            </nav>
+        </header>
+
+        <main id="contenido">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+        </main>
+    </form>
+</body>
+</html>
