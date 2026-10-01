@@ -1,8 +1,11 @@
-﻿/* PÁSALO - estilos base. Paleta A: azul y terracota.
-   Para cambiar colores, tocá solo las variables de :root. */
+﻿/* PÁSALO CSS v4 - azul petróleo + terracota.
+   Los colores se cambian SOLO en las variables de :root (único lugar donde se definen). */
 :root {
-    --color-principal: #1F3A5F;
-    --color-principal-suave: #E4EAF2;
+    --color-principal: #2F5F66; /* títulos, íconos y enlaces */
+    --color-principal-suave: #E0EDED; /* fondos muy claros (hover, fotos) */
+    --bloque-fondo: #2F5F66; /* logo, categoría activa, huella, botones de flecha */
+    --bloque-texto: #FFFFFF; /* texto sobre esos bloques */
+
     --color-acento: #B84F2E; /* terracota oscurecida para que el texto blanco pase el contraste AA */
     --color-acento-hover: #9C4125;
     --color-fondo: #FAF6EF;
@@ -100,8 +103,8 @@ h1, h2, h3, p {
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    background: var(--color-principal);
-    color: #fff;
+    background: var(--bloque-fondo);
+    color: var(--bloque-texto);
     font-size: 20px;
 }
 
@@ -175,8 +178,8 @@ h1, h2, h3, p {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: var(--color-principal);
-    color: #fff;
+    background: var(--bloque-fondo);
+    color: var(--bloque-texto);
     font-size: 14px;
     font-weight: 700;
 }
@@ -237,8 +240,9 @@ h1, h2, h3, p {
         }
 
         .categorias a[aria-current] {
-            background: var(--color-principal);
-            color: #fff;
+            background: var(--bloque-fondo);
+            color: var(--bloque-texto);
+            font-weight: 700;
         }
 
     .categorias .cuenta {
@@ -251,15 +255,15 @@ h1, h2, h3, p {
     }
 
     .categorias a[aria-current] .cuenta {
-        background: rgba(255,255,255,.2);
-        color: #fff;
+        background: rgba(255,255,255,.3);
+        color: inherit;
     }
 
 .huella {
     padding: 16px;
     border-radius: var(--radio);
-    background: var(--color-principal);
-    color: #fff;
+    background: var(--bloque-fondo);
+    color: var(--bloque-texto);
 }
 
     .huella h2 {
@@ -368,13 +372,14 @@ h1, h2, h3, p {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: var(--color-principal);
-    color: #fff;
+    background: var(--bloque-fondo);
+    color: var(--bloque-texto);
     text-decoration: none;
 }
 
     .ir:hover {
         background: var(--color-acento);
+        color: #fff;
     }
 
 /* Estados: color + forma + texto (nunca solo color) */
@@ -417,10 +422,7 @@ h1, h2, h3, p {
     background: var(--estado-ent-fondo);
     color: var(--estado-ent-texto);
 }
-
-    .estado--entregado::before {
-    }
-/* cuadrado */
+/* Entregado: el ::before queda cuadrado (forma por defecto) */
 
 .paginacion {
     display: flex;
