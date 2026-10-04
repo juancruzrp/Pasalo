@@ -128,5 +128,5 @@
         </section>
     </div>
 
-    <a class="publicar" href="#"><i class="ti ti-plus" aria-hidden="true"></i>Publicar artículo</a>
+    <a class="publicar" href="Publicacion.aspx"><i class="ti ti-plus" aria-hidden="true"></i>Publicar artículo</a>
 </asp:Content>

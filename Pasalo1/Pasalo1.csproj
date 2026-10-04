@@ -120,6 +120,7 @@
     <Content Include="Default.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Publicacion.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -215,6 +216,13 @@
     </Compile>
     <Compile Include="Principal.Master.designer.cs">
       <DependentUpon>Principal.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Publicacion.aspx.cs">
+      <DependentUpon>Publicacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Publicacion.aspx.designer.cs">
+      <DependentUpon>Publicacion.aspx</DependentUpon>
     </Compile>
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
