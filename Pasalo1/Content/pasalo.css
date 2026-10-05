@@ -472,3 +472,261 @@ h1, h2, h3, p {
         animation: none !important;
     }
 }
+.perfil {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 24px 60px;
+}
+
+.panel {
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: 16px;
+    padding: 20px;
+}
+
+    .panel h2 {
+        font-size: 18px;
+        color: var(--color-principal);
+    }
+
+.perfil-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 24px;
+}
+
+.perfil-id {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.avatar-grande {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: var(--bloque-fondo);
+    color: var(--bloque-texto);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.perfil-id h1 {
+    font-size: 24px;
+    line-height: 1.2;
+    color: var(--color-principal);
+}
+
+.perfil-valoracion {
+    text-align: right;
+}
+
+.estrellas {
+    color: var(--color-acento);
+    font-size: 18px;
+    letter-spacing: 2px;
+}
+
+.nota {
+    margin-left: 6px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.pestanas {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 20px 0 24px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+    .pestanas a {
+        padding: 9px 18px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 500;
+        color: var(--color-texto-suave);
+    }
+
+        .pestanas a:hover {
+            background: var(--color-principal-suave);
+        }
+
+        .pestanas a[aria-current] {
+            background: var(--color-principal-suave);
+            color: var(--color-principal);
+            font-weight: 700;
+        }
+
+.impacto {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    gap: 20px;
+    align-items: start;
+}
+
+@media (max-width: 800px) {
+    .impacto {
+        grid-template-columns: 1fr;
+    }
+}
+
+.col-apilada {
+    display: grid;
+    gap: 16px;
+}
+
+.dato {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.dato-icono {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+    font-size: 22px;
+}
+
+.dato-icono--acento {
+    background: #F6E3DB;
+    color: var(--color-acento);
+}
+
+.dato-valor {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-principal);
+}
+
+.dato-valor--acento {
+    color: var(--color-acento);
+}
+
+.huella--ancha {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.progreso {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: conic-gradient(var(--bloque-texto) calc(var(--valor) * 1%), rgba(255, 255, 255, .25) 0);
+    font-weight: 700;
+}
+
+    .progreso::before {
+        content: "";
+        position: absolute;
+        inset: 9px;
+        border-radius: 50%;
+        background: var(--bloque-fondo);
+    }
+
+    .progreso span {
+        position: relative;
+    }
+
+.barras {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+}
+
+.barra-fila {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.barra-pista {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--color-principal-suave);
+    overflow: hidden;
+}
+
+.barra-relleno {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--color-principal);
+}
+
+.barra-relleno--propia {
+    background: var(--color-acento);
+}
+
+.lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+}
+
+.fila {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+}
+
+.fila-icono {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+    font-size: 22px;
+}
+
+.fila-texto {
+    flex: 1;
+    min-width: 0;
+}
+
+.fila-titulo {
+    font-weight: 700;
+}
+
+.fila-der {
+    text-align: right;
+    font-size: 14px;
+}
+
+.enlace {
+    color: var(--color-principal);
+    font-weight: 500;
+}

@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet" />
-     <link href="~/Content/pasalo.css?v=4" rel="stylesheet" runat="server" />
+     <link href="~/Content/pasalo.css?v=5" rel="stylesheet" runat="server" />
     <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
 </head>
 <body>
@@ -30,11 +30,11 @@
             </div>
 
             <nav class="menu" aria-label="Principal">
-                <a href="Default.aspx" aria-current="page">Catálogo</a>
+                <a href="Default.aspx"<%= Request.Path.IndexOf("Perfil", StringComparison.OrdinalIgnoreCase) < 0 ? " aria-current=\"page\"" : "" %>>Catálogo</a>
                 <a href="#">Mi actividad</a>
                 <a href="#">Chat</a>
                 <button type="button" class="icono-btn" aria-label="Notificaciones"><i class="ti ti-bell" aria-hidden="true"></i></button>
-                <span class="usuario"><span class="avatar" aria-hidden="true">S</span>Hola, Sofía</span>
+               <a class="usuario" href="Perfil.aspx"<%= Request.Path.IndexOf("Perfil", StringComparison.OrdinalIgnoreCase) >= 0 ? " aria-current=\"page\"" : "" %>><span class="avatar" aria-hidden="true">S</span>Hola, Sofía</a>
             </nav>
         </header>
 
