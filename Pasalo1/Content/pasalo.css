@@ -1,4 +1,4 @@
-﻿/* PÁSALO CSS v4 - azul petróleo + terracota.
+﻿/* PÁSALO CSS v6 - azul petróleo + terracota.
    Los colores se cambian SOLO en las variables de :root (único lugar donde se definen). */
 :root {
     --color-principal: #2F5F66; /* títulos, íconos y enlaces */
@@ -472,6 +472,8 @@ h1, h2, h3, p {
         animation: none !important;
     }
 }
+
+/* ---------- Perfil ---------- */
 .perfil {
     max-width: 1100px;
     margin: 0 auto;
@@ -730,3 +732,217 @@ h1, h2, h3, p {
     color: var(--color-principal);
     font-weight: 500;
 }
+
+/* ---------- Detalle de publicación ---------- */
+.detalle {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 24px;
+    align-items: start;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 24px 60px;
+}
+
+@media (max-width: 960px) {
+    .detalle {
+        grid-template-columns: 1fr;
+    }
+}
+
+.detalle-lateral {
+    display: grid;
+    gap: 16px;
+}
+
+.detalle-cuerpo {
+    display: grid;
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+    gap: 28px;
+}
+
+@media (max-width: 700px) {
+    .detalle-cuerpo {
+        grid-template-columns: 1fr;
+    }
+}
+
+.volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    color: var(--color-principal);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+    .volver:hover {
+        text-decoration: underline;
+    }
+
+.foto-detalle {
+    display: grid;
+    place-items: center;
+    min-height: 280px;
+    border-radius: 14px;
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+    font-size: 96px;
+}
+
+.detalle h1 {
+    margin-top: 12px;
+    font-size: 28px;
+    line-height: 1.2;
+    color: var(--color-principal);
+}
+
+.detalle-estado {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pildora {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: var(--color-fondo);
+    border: 1px solid var(--color-borde);
+    color: var(--color-texto-suave);
+}
+
+.etiquetas {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 14px 0;
+    padding: 0;
+}
+
+    .etiquetas li {
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        background: var(--color-principal-suave);
+        color: var(--color-principal);
+    }
+
+.descripcion {
+    margin-bottom: 20px;
+    color: var(--color-texto-suave);
+}
+
+.solicitud {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+    .solicitud textarea {
+        resize: vertical;
+    }
+
+.boton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 22px;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    background: var(--color-acento);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+}
+
+    .boton:hover {
+        background: var(--color-acento-hover);
+    }
+
+.aviso {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+    font-weight: 500;
+}
+
+.reportar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--color-acento-hover);
+    text-decoration: none;
+}
+
+    .reportar:hover {
+        text-decoration: underline;
+    }
+
+.donante {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 24px;
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--color-fondo);
+    border: 1px solid var(--color-borde);
+}
+
+.avatar--md {
+    width: 48px;
+    height: 48px;
+    font-size: 16px;
+}
+
+.donante-datos {
+    flex: 1;
+    min-width: 0;
+}
+
+.donante-rep {
+    text-align: right;
+    font-size: 13px;
+}
+
+.fila-titulo a {
+    text-decoration: none;
+}
+
+    .fila-titulo a:hover {
+        text-decoration: underline;
+    }
+
+.fila-texto .estado {
+    margin-top: 6px;
+}
+
+.consejo {
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--color-principal-suave);
+    color: var(--color-principal);
+    font-size: 14px;
+}
+
+    .consejo h2 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 15px;
+    }

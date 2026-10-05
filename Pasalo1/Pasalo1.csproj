@@ -97,6 +97,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DetallePublicacion.aspx" />
     <Content Include="Perfil.aspx" />
     <Content Include="About.aspx" />
     <Content Include="Contact.aspx" />
@@ -184,6 +185,13 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DetallePublicacion.aspx.cs">
+      <DependentUpon>DetallePublicacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DetallePublicacion.aspx.designer.cs">
+      <DependentUpon>DetallePublicacion.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Perfil.aspx.cs">
       <DependentUpon>Perfil.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

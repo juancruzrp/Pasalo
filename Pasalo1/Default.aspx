@@ -78,7 +78,7 @@
                         <p class="suave">Todas las carreras</p>
                         <div class="tarjeta-pie">
                             <span class="estado estado--disponible">Disponible</span>
-                            <a class="ir" href="#" aria-label="Ver detalle de Calculadora científica Casio FX-991"><i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+                            <a class="ir" href="DetallePublicacion.aspx" aria-label="Ver detalle de Calculadora científica Casio FX-991"><i class="ti ti-arrow-right" aria-hidden="true"></i></a>
                         </div>
                     </div>
                 </article>
