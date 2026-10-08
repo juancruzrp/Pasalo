@@ -1,0 +1,64 @@
+﻿
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Publica.Master.cs" Inherits="Pasalo1.Publica" %>
+
+<!DOCTYPE html>
+<html lang="es">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>PÁSALO - Comunidad universitaria</title>
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+
+    <!-- Iconos -->
+    <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet" />
+
+    <!-- CSS general -->
+    <link href="~/Content/pasalo.css?v=6" rel="stylesheet" runat="server" />
+
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
+</head>
+
+<body>
+    <form id="form1" runat="server">
+
+        <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+        <!-- ENCABEZADO PUBLICO -->
+        <header class="barra">
+
+            <!-- LOGO -->
+            <a class="logo" href="Inicio.aspx" aria-label="PÁSALO, ir al inicio">
+                <span class="logo-marca">
+                    <i class="ti ti-recycle" aria-hidden="true"></i>
+                </span>
+                PÁSALO
+            </a>
+
+            <!-- NAVEGACION PUBLICA -->
+            <nav class="menu" aria-label="Navegación pública">
+
+                <a href="Inicio.aspx">Inicio</a>
+
+                <a href="Login.aspx">Iniciar sesión</a>
+
+                <a href="Registro.aspx" class="btn-registro">
+                    Registrarme
+                </a>
+
+            </nav>
+
+        </header>
+
+        <!-- CONTENIDO DE LAS PAGINAS -->
+        <main id="contenido">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
+        </main>
+
+    </form>
+</body>
+</html>
