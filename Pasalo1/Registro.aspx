@@ -258,7 +258,7 @@
                     <asp:TextBox ID="txtEmail" runat="server"
                         CssClass="registro-input"
                         TextMode="Email"
-                        placeholder="usuario@frgp.utn.edu.ar"
+                        placeholder="usuario@alumnos.frgp.utn.edu.ar"
                         MaxLength="150" />
 
                     <span class="registro-ayuda">
@@ -355,11 +355,10 @@
 
                 </div>
 
-
+                <asp:Label ID="lblError" runat="server" CssClass="registro-error"></asp:Label>
                 <!-- BOTON -->
-                <asp:Button ID="btnRegistrarse" runat="server"
-                    Text="Crear mi cuenta"
-                    CssClass="registro-boton" />
+                <asp:Button ID="btnRegistrarse" runat="server" Text="Crear mi cuenta" CssClass="registro-boton" OnClick="btnRegistrarse_Click" />
+
 
 
                 <!-- INICIAR SESION -->

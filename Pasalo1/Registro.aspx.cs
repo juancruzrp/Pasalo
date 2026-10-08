@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dominio;
+using negocio;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -12,6 +14,28 @@ namespace Pasalo1
         protected void Page_Load(object sender, EventArgs e)
         {
 
+        }
+
+        protected void btnRegistrarse_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Usuario usuario = new Usuario();
+                usuario.Email = txtEmail.Text;
+                usuario.Nombre = txtNombre.Text;
+
+                UsuarioNegocio negocio = new UsuarioNegocio();
+                negocio.Registrar(usuario, txtPassword.Text);
+                Response.Redirect("Login.aspx", false);
+            }
+            catch (NegocioException ex)
+            {
+                lblError.Text = ex.Message;
+            }
+            catch (Exception ex) {
+                Session.Add("Error", ex.ToString());
+                Response.Redirect("Error.aspx", false);
+            }
         }
     }
 }
