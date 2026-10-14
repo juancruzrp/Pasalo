@@ -26,7 +26,7 @@ namespace Pasalo1
 
                 UsuarioNegocio negocio = new UsuarioNegocio();
                 negocio.Registrar(usuario, txtPassword.Text);
-                Response.Redirect("Login.aspx", false);
+                Response.Redirect("Login.aspx?registro=ok", false);
             }
             catch (NegocioException ex)
             {

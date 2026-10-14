@@ -206,6 +206,10 @@
                 font-size: 23px;
             }
         }
+
+        .login-mensaje { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 11px; margin-bottom: 22px; font-size: 13px; line-height: 1.6; }
+        .login-mensaje--ok { background: #edf5f1; border: 1px solid #cfe5db; color: #1e5b34; }
+        .login-mensaje--error { background: #fbeae5; border: 1px solid #f0c9bd; color: #8a2f17; }
     </style>
 
 </asp:Content>
@@ -242,7 +246,15 @@
 
                 </div>
 
+                    <asp:Panel ID="pnlExito" runat="server" Visible="false" CssClass="login-mensaje login-mensaje--ok" role="status">
+        <i class="ti ti-circle-check" aria-hidden="true"></i>
+        <span>Tu cuenta fue creada. Ya podés iniciar sesión.</span>
+    </asp:Panel>
 
+    <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="login-mensaje login-mensaje--error" role="alert">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i>
+        <asp:Label ID="lblError" runat="server" />
+    </asp:Panel>
                 <!-- CORREO -->
                 <div class="login-grupo">
 
@@ -290,7 +302,8 @@
                 <!-- BOTON INICIAR SESION -->
                 <asp:Button ID="btnIngresar" runat="server"
                     Text="Iniciar sesión"
-                    CssClass="login-boton" />
+                    CssClass="login-boton"
+                    OnClick="btnIngresar_Click" />
 
 
                 <!-- REGISTRO -->
