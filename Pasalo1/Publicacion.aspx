@@ -657,6 +657,10 @@
 
             <section class="formulario-publicacion"
                      aria-label="Formulario para publicar un artículo">
+                <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="publicacion-error" role="alert">
+                   <i class="ti ti-alert-circle" aria-hidden="true"></i>
+                   <asp:Label ID="lblError" runat="server" />
+               </asp:Panel>
 
 
 
@@ -797,6 +801,22 @@
 
 
                 </div>
+               <script>
+                    document.querySelectorAll('.archivo-oculto').forEach(function (input) {
+                        input.addEventListener('change', function () {
+                            var etiqueta = document.querySelector('label[for="' + input.id + '"]');
+                            if (!etiqueta || !input.files.length) return;
+
+                            etiqueta.style.backgroundImage = 'url(' + URL.createObjectURL(input.files[0]) + ')';
+                            etiqueta.style.backgroundSize = 'cover';
+                            etiqueta.style.backgroundPosition = 'center';
+
+                            var texto = etiqueta.querySelector('span');
+                            texto.textContent = input.files[0].name;
+                            texto.style.cssText = 'background:rgba(255,255,255,.9);padding:2px 6px;border-radius:6px;max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+                        });
+                    });
+               </script>
 
 
 
@@ -1156,14 +1176,16 @@
                         runat="server"
                         Text="Cancelar"
                         CssClass="btn-cancelar"
-                        CausesValidation="false" />
+                        CausesValidation="false"
+                        OnClick="btnCancelar_Click" />
 
 
                     <asp:Button
                         ID="btnPublicar"
                         runat="server"
                         Text="Publicar artículo"
-                        CssClass="btn-publicar" />
+                        CssClass="btn-publicar"
+                        OnClick="btnPublicar_Click"  />
 
 
                 </div>
