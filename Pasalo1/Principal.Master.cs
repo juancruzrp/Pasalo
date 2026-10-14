@@ -13,13 +13,24 @@ namespace Pasalo1
                 Response.Redirect("Login.aspx", true);
         }
 
-        // Los usa el encabezado (Principal.Master) con <%: NombreUsuario %>
+        // Los usa el encabezado (Principal.Master) con <%: PrimerNombre %> e <%: InicialUsuario %>
         protected string NombreUsuario
         {
             get
             {
                 Usuario u = Session["Usuario"] as Usuario;
                 return u == null ? "" : u.Nombre;
+            }
+        }
+
+        // Solo el primer nombre, para el saludo ("Hola, Ivana")
+        protected string PrimerNombre
+        {
+            get
+            {
+                string n = NombreUsuario.Trim();
+                int i = n.IndexOf(' ');
+                return i < 0 ? n : n.Substring(0, i);
             }
         }
 
