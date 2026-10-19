@@ -168,7 +168,17 @@
         }
 
         .archivo-oculto {
-            display: none;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+        }
+
+        .archivo-oculto:focus-visible + .foto-upload,
+        .archivo-oculto:focus-visible + .foto-upload {
+            outline: 3px solid #b84e36;
+            outline-offset: 2px;
         }
 
         .foto-upload {
@@ -604,6 +614,77 @@
 
         }
 
+        
+            /* ===== Fotos: vista previa ===== */
+            .foto-slot { position: relative; }
+            .foto-upload { position: relative; overflow: hidden; }
+ 
+            .foto-upload.con-foto {
+                background-size: cover;
+                background-position: center;
+                border-style: solid;
+                border-color: #28666d;
+            }
+            .foto-upload.con-foto i,
+            .foto-upload.con-foto small { display: none; }
+ 
+            /* Nombre del archivo: barra oscura abajo, para que se lea sobre cualquier foto */
+            .foto-upload.con-foto span {
+                position: absolute;
+                left: 0; right: 0; bottom: 0;
+                padding: 18px 8px 6px;
+                background: linear-gradient(transparent, rgba(0, 0, 0, .7));
+                color: #fff;
+                font-size: 11px;
+                font-weight: 500;
+                text-align: left;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+ 
+            /* Etiqueta "Principal" sobre la primera foto elegida */
+            .foto-upload.es-principal::after {
+                content: "Principal";
+                position: absolute;
+                top: 8px; left: 8px;
+                padding: 2px 9px;
+                border-radius: 999px;
+                background: #28666d;
+                color: #fff;
+                font-size: 10px;
+                font-weight: 700;
+            }
+ 
+            /* Botón para quitar la foto */
+            .foto-quitar {
+                position: absolute;
+                top: 6px; right: 6px;
+                z-index: 2;
+                display: grid;
+                place-items: center;
+                width: 26px; height: 26px;
+                padding: 0;
+                border: 0;
+                border-radius: 50%;
+                background: rgba(0, 0, 0, .65);
+                color: #fff;
+                font-size: 17px;
+                line-height: 1;
+                cursor: pointer;
+            }
+            .foto-quitar:hover { background: #b84e36; }
+            .foto-quitar[hidden] { display: none; }
+ 
+            /* Avisos de error (fotos y formulario) */
+            .publicacion-error {
+                display: flex; gap: 10px; align-items: flex-start;
+                padding: 12px 14px; margin-top: 12px; margin-bottom: 22px;
+                border-radius: 11px;
+                background: #fbeae5; border: 1px solid #f0c9bd; color: #8a2f17;
+                font-size: 13px;
+            }
+
     </style>
 
 </asp:Content>
@@ -801,22 +882,6 @@
 
 
                 </div>
-               <script>
-                    document.querySelectorAll('.archivo-oculto').forEach(function (input) {
-                        input.addEventListener('change', function () {
-                            var etiqueta = document.querySelector('label[for="' + input.id + '"]');
-                            if (!etiqueta || !input.files.length) return;
-
-                            etiqueta.style.backgroundImage = 'url(' + URL.createObjectURL(input.files[0]) + ')';
-                            etiqueta.style.backgroundSize = 'cover';
-                            etiqueta.style.backgroundPosition = 'center';
-
-                            var texto = etiqueta.querySelector('span');
-                            texto.textContent = input.files[0].name;
-                            texto.style.cssText = 'background:rgba(255,255,255,.9);padding:2px 6px;border-radius:6px;max-width:90%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
-                        });
-                    });
-               </script>
 
 
 
@@ -943,7 +1008,7 @@
                                 ID="lblCategoria"
                                 runat="server"
                                 AssociatedControlID="ddlCategoria"
-                                CssClass="rotulo-publicacion">
+                                CssClass="campo-publicacion">
 
                                 Categoría
                                 <span class="requerido">*</span>
@@ -996,7 +1061,7 @@
                                 ID="lblCarrera"
                                 runat="server"
                                 AssociatedControlID="ddlCarrera"
-                                CssClass="rotulo-publicacion">
+                                CssClass="campo-publicacion">
 
                                 Carrera
 
@@ -1338,6 +1403,141 @@
 
 
     </div>
+    
+<script>
+            (function () {
+                var MAX_BYTES = 5 * 1024 * 1024;   // 5 MB por foto
+                var inputs = Array.prototype.slice.call(document.querySelectorAll('.archivo-oculto'));
+                var grilla = document.querySelector('.fotos-grid');
 
+                // Aviso para problemas con las fotos (los lectores de pantalla lo leen solos)
+                var aviso = document.createElement('div');
+                aviso.className = 'publicacion-error';
+                aviso.setAttribute('role', 'alert');
+                aviso.style.display = 'none';
+                grilla.parentNode.appendChild(aviso);
+
+                function mostrarAviso(texto) {
+                    aviso.textContent = texto;
+                    aviso.style.display = texto ? 'flex' : 'none';
+                }
+
+                // Cada foto queda en su "slot": campo + recuadro + botón para quitarla
+                var slots = inputs.map(function (input, i) {
+                    var label = document.querySelector('label[for="' + input.id + '"]');
+                    var texto = label.querySelector('span');
+
+                    var slot = document.createElement('div');
+                    slot.className = 'foto-slot';
+                    input.parentNode.insertBefore(slot, input);
+                    slot.appendChild(input);
+                    slot.appendChild(label);
+
+                    var quitar = document.createElement('button');
+                    quitar.type = 'button';
+                    quitar.className = 'foto-quitar';
+                    quitar.hidden = true;
+                    quitar.setAttribute('aria-label', 'Quitar foto ' + (i + 1));
+                    quitar.innerHTML = '&times;';
+                    slot.appendChild(quitar);
+
+                    return { input: input, label: label, texto: texto, original: texto.textContent, quitar: quitar, url: null };
+                });
+
+                function limpiar(s) {
+                    if (s.url) URL.revokeObjectURL(s.url);
+                    s.url = null;
+                    s.input.value = '';
+                    s.label.classList.remove('con-foto');
+                    s.label.style.backgroundImage = '';
+                    s.texto.textContent = s.original;
+                    s.quitar.hidden = true;
+                }
+
+                // La primera foto elegida (en orden) es la imagen principal
+                function marcarPrincipal() {
+                    var primera = true;
+                    slots.forEach(function (s) {
+                        var tiene = s.input.files.length > 0;
+                        s.label.classList.toggle('es-principal', tiene && primera);
+                        if (tiene) primera = false;
+                    });
+                }
+
+                slots.forEach(function (s) {
+                    s.input.addEventListener('change', function () {
+                        mostrarAviso('');
+                        if (!s.input.files.length) { limpiar(s); marcarPrincipal(); return; }
+
+                        var archivo = s.input.files[0];
+                        if (!/^image\/(jpeg|png)$/.test(archivo.type)) {
+                            limpiar(s); marcarPrincipal();
+                            mostrarAviso('Solo se aceptan imágenes JPG o PNG.');
+                            return;
+                        }
+                        if (archivo.size > MAX_BYTES) {
+                            limpiar(s); marcarPrincipal();
+                            mostrarAviso('Cada foto puede pesar hasta 5 MB.');
+                            return;
+                        }
+
+                        if (s.url) URL.revokeObjectURL(s.url);
+                        s.url = URL.createObjectURL(archivo);
+                        s.label.style.backgroundImage = 'url("' + s.url + '")';
+                        s.label.classList.add('con-foto');
+                        s.texto.textContent = archivo.name;
+                        s.quitar.hidden = false;
+                        marcarPrincipal();
+                    });
+
+                    s.quitar.addEventListener('click', function () {
+                        limpiar(s);
+                        marcarPrincipal();
+                        s.input.focus();
+                    });
+                });
+
+                            // Contador de caracteres de la descripción
+                            var desc = document.querySelector('[id$="txtDescripcion"]');
+                            var contador = document.querySelector('.contador');
+                            if (desc && contador) {
+                                desc.maxLength = 1000;
+                                var actualizar = function () { contador.textContent = desc.value.length + ' / 1000 caracteres'; };
+                                desc.addEventListener('input', actualizar);
+                                actualizar();
+                            }
+
+                    // Revisión antes de enviar: si falta algo avisa SIN recargar la página (así no se pierden las fotos)
+                    // El servidor igual vuelve a validar todo: esto es solo para comodidad.
+                    var avisoForm = document.createElement('div');
+                    avisoForm.className = 'publicacion-error';
+                    avisoForm.setAttribute('role', 'alert');
+                    avisoForm.style.display = 'none';
+                    var acciones = document.querySelector('.acciones-publicacion');
+                    acciones.parentNode.insertBefore(avisoForm, acciones);
+
+                    function campo(sufijo) { return document.querySelector('[id$="' + sufijo + '"]'); }
+
+                    var btnPublicar = campo('btnPublicar');
+                    if (btnPublicar) {
+                        btnPublicar.addEventListener('click', function (ev) {
+                            var faltan = [];
+                            if (!campo('txtTitulo').value.trim()) faltan.push('el título');
+                            if (!campo('txtDescripcion').value.trim()) faltan.push('la descripción');
+                            if (campo('ddlCategoria').value === '0') faltan.push('la categoría');
+                            if (!campo('rbDonacion').checked && !campo('rbIntercambio').checked) faltan.push('si es donación o intercambio');
+                            if (!slots.some(function (s) { return s.input.files.length > 0; })) faltan.push('al menos una foto');
+
+                            if (faltan.length) {
+                                ev.preventDefault();
+                                avisoForm.textContent = 'Falta completar: ' + faltan.join(', ') + '.';
+                                avisoForm.style.display = 'flex';
+                            } else {
+                                avisoForm.style.display = 'none';
+                            }
+                        });
+                    }
+                })();
+</script>
 
 </asp:Content>
