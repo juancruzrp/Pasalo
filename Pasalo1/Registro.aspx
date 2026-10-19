@@ -271,35 +271,9 @@
                 <!-- CARRERA -->
                 <div class="registro-grupo">
 
-                    <asp:Label ID="lblCarrera" runat="server"
-                        AssociatedControlID="ddlCarrera"
-                        CssClass="registro-label"
-                        Text="Carrera" />
-
-                    <asp:DropDownList ID="ddlCarrera" runat="server"
-                        CssClass="registro-input">
-
-                        <asp:ListItem Text="Seleccioná tu carrera" Value="" />
-
-                        <asp:ListItem Text="Tecnicatura Universitaria en Programación"
-                            Value="TUP" />
-
-                        <asp:ListItem Text="Ingeniería en Sistemas de Información"
-                            Value="ISI" />
-
-                        <asp:ListItem Text="Ingeniería Mecánica"
-                            Value="MEC" />
-
-                        <asp:ListItem Text="Ingeniería Eléctrica"
-                            Value="ELE" />
-
-                        <asp:ListItem Text="Ingeniería Industrial"
-                            Value="IND" />
-
-                        <asp:ListItem Text="Otra carrera"
-                            Value="OTRA" />
-
-                    </asp:DropDownList>
+                        <asp:DropDownList ID="ddlCarrera" runat="server"
+                            CssClass="registro-input">
+                         </asp:DropDownList>
 
                 </div>
 

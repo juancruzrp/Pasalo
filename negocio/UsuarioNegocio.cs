@@ -7,9 +7,9 @@ namespace negocio
 {
     public class UsuarioNegocio
     {
-       
+
         private const string DominioInstitucional = "@alumnos.frgp.utn.edu.ar";
-        private const int LargoMinimoPassword = 6;
+        private const int LargoMinimoPassword = 8;   
 
         // RF1 - Registrar usuario. Devuelve el IdUsuario creado.
         // Lanza NegocioException con el mensaje a mostrar si no se cumple alguna regla.
@@ -27,6 +27,10 @@ namespace negocio
             if (!EsEmailInstitucional(email))
                 throw new NegocioException("El correo ingresado no corresponde a la institución.");
 
+            // La carrera es obligatoria ("Otra carrera" cubre a quien no figure en la lista)
+            if (nuevo.IdCarrera == null)
+                throw new NegocioException("Seleccioná tu carrera.");
+
             if (password.Length < LargoMinimoPassword)
                 throw new NegocioException("La contraseña debe tener al menos " + LargoMinimoPassword + " caracteres.");
 
@@ -37,13 +41,12 @@ namespace negocio
 
             nuevo.Email = email;
             nuevo.Nombre = nombre;
-            nuevo.PasswordHash = PasswordHelper.Hash(password);   // nunca se guarda la contraseña en texto plano
-
+            nuevo.PasswordHash = PasswordHelper.Hash(password);   
             return usuarioAcceso.Agregar(nuevo);
         }
 
         // Inicio de sesion. Devuelve el usuario o lanza NegocioException.
-        // Mismo mensaje si falla el correo o la contraseña, para no revelar que correos estan registrados.
+       
         public Usuario Loguear(string email, string password)
         {
             email = (email ?? "").Trim().ToLower();
