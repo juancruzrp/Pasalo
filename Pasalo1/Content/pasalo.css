@@ -965,3 +965,75 @@ h1, h2, h3, p {
         background-color: #1e5056;
         color: #ffffff;
     }
+
+/* ---------- Aviso de éxito (por ejemplo, "artículo publicado") ---------- */
+.aviso-pagina {
+    max-width: 1280px;
+    margin: 20px auto 0;
+    padding: 0 24px;
+}
+
+.banner-exito {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 16px 18px;
+    border-radius: var(--radio);
+    background: var(--estado-disp-fondo);
+    color: var(--estado-disp-texto);
+    border: 1px solid #b9dfc6;
+}
+
+    .banner-exito > i {
+        flex: none;
+        font-size: 28px;
+    }
+
+    .banner-exito .texto {
+        flex: 1;
+        min-width: 220px;
+    }
+
+    .banner-exito strong {
+        display: block;
+        font-size: 16px;
+    }
+
+    .banner-exito p {
+        font-size: 14px;
+    }
+
+    .banner-exito .accion {
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: var(--estado-disp-texto);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .banner-exito .accion:hover {
+            background: #154527;
+        }
+
+    .banner-exito .cerrar {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: inherit;
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+        .banner-exito .cerrar:hover {
+            background: rgba(30, 91, 52, .14);
+        }
+ 

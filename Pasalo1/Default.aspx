@@ -1,6 +1,29 @@
 ﻿ <%@ Page Title="Catálogo" Language="C#" MasterPageFile="~/Principal.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Pasalo1._Default" %>
 
 <asp:Content ID="Contenido" ContentPlaceHolderID="MainContent" runat="server">
+
+    <% if (Request.QueryString["publicado"] == "ok") { %>
+<div class="aviso-pagina">
+    <div class="banner-exito" id="avisoPublicado" role="status" tabindex="-1">
+        <i class="ti ti-circle-check" aria-hidden="true"></i>
+        <div class="texto">
+            <strong>¡Tu artículo ya está publicado!</strong>
+            <p>Ahora otros estudiantes pueden verlo y solicitarlo.</p>
+        </div>
+        <a class="accion" href="Publicacion.aspx">Publicar otro artículo</a>
+        <button type="button" class="cerrar" aria-label="Cerrar aviso"
+                onclick="document.getElementById('avisoPublicado').parentNode.remove();">&times;</button>
+    </div>
+</div>
+<script>
+    // Saca "?publicado=ok" de la dirección: al recargar la página el aviso no vuelve a aparecer
+    history.replaceState(null, '', location.pathname);
+    // Lleva el foco al aviso para que los lectores de pantalla lo anuncien
+    document.getElementById('avisoPublicado').focus();
+</script>
+<% } %>
+
+
     <div class="catalogo">
 
         <aside class="lateral" aria-label="Filtros">

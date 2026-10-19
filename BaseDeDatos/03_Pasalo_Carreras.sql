@@ -31,7 +31,4 @@ WHERE c.Nombre IN (N'Contador Público', N'Ingeniería Química')
   AND NOT EXISTS (SELECT 1 FROM Publicacion p WHERE p.IdCarrera = c.IdCarrera);
 GO
  
-SELECT IdCarrera, Nombre FROM Carrera ORDER BY IdCarrera;
-GO
-
 
