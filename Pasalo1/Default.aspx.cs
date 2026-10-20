@@ -1,185 +1,153 @@
-﻿using dominio;
-using negocio;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using dominio;
+using negocio;
 
 namespace Pasalo1
 {
     public partial class _Default : Page
     {
-        // Una fila de la lista de categorías (la primera es "Todas")
-        public class ItemCategoria
-        {
-            public int Id { get; set; }
-            public string Nombre { get; set; }
-            public string Icono { get; set; }
-            public int Cantidad { get; set; }
-            public bool Actual { get; set; }
-            public string Url { get; set; }
-        }
+        private readonly PublicacionNegocio negocio =
+            new PublicacionNegocio();
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            try
+            if (!IsPostBack)
             {
-                PublicacionNegocio negocio = new PublicacionNegocio();
-
-                if (!IsPostBack)
-                    CargarCarreras(negocio);
-
-                MostrarCatalogo(negocio);
-            }
-            catch (Exception ex)
-            {
-                Session.Add("Error", ex.ToString());
-                Response.Redirect("Error.aspx", false);
+                try
+                {
+                    CargarFiltros();
+                    CargarPublicaciones();
+                }
+                catch (Exception)
+                {
+                    MostrarError();
+                }
             }
         }
 
-        // El filtro de carreras sale de la base (así coincide con el registro y con "Publicar")
-        private void CargarCarreras(PublicacionNegocio negocio)
+        private void CargarFiltros()
         {
             ddlCarrera.DataSource = negocio.ListarCarreras();
-            ddlCarrera.DataValueField = "Id";
             ddlCarrera.DataTextField = "Nombre";
+            ddlCarrera.DataValueField = "Id";
             ddlCarrera.DataBind();
-            ddlCarrera.Items.Insert(0, new ListItem("Todas las carreras", "0"));
+            ddlCarrera.Items.Insert(
+                0, new ListItem("Todas las carreras", "0"));
 
-            // Si venimos desde un link de categoría, se conserva la carrera elegida
-            int idCarrera = LeerEntero(Request.QueryString["carrera"]);
-            if (ddlCarrera.Items.FindByValue(idCarrera.ToString()) != null)
-                ddlCarrera.SelectedValue = idCarrera.ToString();
+            ddlCategoria.DataSource = negocio.ListarCategorias();
+            ddlCategoria.DataTextField = "Nombre";
+            ddlCategoria.DataValueField = "Id";
+            ddlCategoria.DataBind();
+            ddlCategoria.Items.Insert(
+                0, new ListItem("Todas las categorías", "0"));
         }
 
-        // Dibuja categorías (con sus contadores) y la grilla según los filtros elegidos.
-        // La categoría viaja por la dirección (?cat=2); carrera y orden por los desplegables.
-        private void MostrarCatalogo(PublicacionNegocio negocio)
+        private void CargarPublicaciones()
         {
-            int idCarrera = LeerEntero(ddlCarrera.SelectedValue);
-            int idCategoria = LeerEntero(Request.QueryString["cat"]);
-            bool masRecientes = ddlOrden.SelectedValue != "antiguos";
+            int categoria = Convert.ToInt32(
+                ddlCategoria.SelectedValue);
 
-            // Categorías con la cantidad de objetos disponibles
-            Dictionary<int, int> cuentas = negocio.ContarDisponiblesPorCategoria(idCarrera);
-            int total = 0;
-            foreach (int cantidad in cuentas.Values)
-                total += cantidad;
+            int carrera = Convert.ToInt32(
+                ddlCarrera.SelectedValue);
 
-            List<ItemCategoria> categorias = new List<ItemCategoria>();
-            categorias.Add(new ItemCategoria
+            bool masRecientes = ddlOrden.SelectedValue == "DESC";
+
+            List<dominio.Publicacion> lista = negocio.ListarDisponibles(
+                categoria,
+                carrera,
+                txtBuscar.Text,
+                masRecientes);
+
+            rptPublicaciones.DataSource = lista;
+            rptPublicaciones.DataBind();
+
+            lblCantidad.Text = lista.Count == 1
+                ? "Mostrando 1 objeto disponible"
+                : "Mostrando " + lista.Count +
+                  " objetos disponibles";
+
+            pnlSinResultados.Visible = lista.Count == 0;
+            lblError.Visible = false;
+        }
+
+        protected void Filtros_Changed(
+            object sender, EventArgs e)
+        {
+            try
             {
-                Id = 0,
-                Nombre = "Todas",
-                Icono = "ti-layout-grid",
-                Cantidad = total,
-                Actual = idCategoria == 0,
-                Url = UrlCatalogo(0, idCarrera)
-            });
-
-            foreach (Categoria c in negocio.ListarCategorias())
-            {
-                int cant;
-                cuentas.TryGetValue(c.Id, out cant);
-                categorias.Add(new ItemCategoria
-                {
-                    Id = c.Id,
-                    Nombre = c.Nombre,
-                    Icono = IconoCategoria(c.Nombre),
-                    Cantidad = cant,
-                    Actual = idCategoria == c.Id,
-                    Url = UrlCatalogo(c.Id, idCarrera)
-                });
+                CargarPublicaciones();
             }
-
-            rptCategorias.DataSource = categorias;
-            rptCategorias.DataBind();
-
-            // Publicaciones
-            List<dominio.Publicacion> lista = negocio.ListarDisponibles(idCarrera, idCategoria, masRecientes);
-            bool hayObjetos = lista.Count > 0;
-
-            pnlGrilla.Visible = hayObjetos;
-            pnlVacio.Visible = !hayObjetos;
-
-            if (hayObjetos)
+            catch (Exception)
             {
-                rptPublicaciones.DataSource = lista;
-                rptPublicaciones.DataBind();
-                lblResumen.Text = "Mostrando " + lista.Count + (lista.Count == 1 ? " objeto" : " objetos") + " para donar o intercambiar";
-            }
-            else
-            {
-                bool conFiltros = idCarrera != 0 || idCategoria != 0;
-                lblResumen.Text = "No hay objetos para mostrar";
-                lblVacio.Text = conFiltros
-                    ? "No hay objetos disponibles con estos filtros."
-                    : "Todavía no hay objetos publicados. ¡Publicá el primero!";
+                MostrarError();
             }
         }
 
-        private static int LeerEntero(string texto)
+        private void MostrarError()
         {
-            int valor;
-            return int.TryParse(texto, out valor) && valor > 0 ? valor : 0;
+            lblError.Text =
+                "No se pudieron cargar las publicaciones. " +
+                "Intentá nuevamente.";
+
+            lblError.Visible = true;
+            pnlSinResultados.Visible = false;
+
+            rptPublicaciones.DataSource =
+                new List<dominio.Publicacion>();
+
+            rptPublicaciones.DataBind();
         }
 
-        private static string UrlCatalogo(int idCategoria, int idCarrera)
+        protected string ObtenerFoto(object dataItem)
         {
-            string url = "Default.aspx";
-            List<string> partes = new List<string>();
-            if (idCategoria > 0) partes.Add("cat=" + idCategoria);
-            if (idCarrera > 0) partes.Add("carrera=" + idCarrera);
-            return partes.Count == 0 ? url : url + "?" + string.Join("&", partes);
-        }
+            dominio.Publicacion p = (dominio.Publicacion)dataItem;
 
-        // Ícono por nombre de categoría; las nuevas usan uno genérico
-        private static string IconoCategoria(string nombre)
-        {
-            switch ((nombre ?? "").Trim().ToLowerInvariant())
-            {
-                case "ropa": return "ti-shirt";
-                case "libros": return "ti-book";
-                case "apuntes": return "ti-pencil";
-                case "electrónicos": return "ti-device-laptop";
-                default: return "ti-box";
-            }
-        }
-
-        // ---- Ayudas para el marcado de cada tarjeta (Container.DataItem es la publicación) ----
-
-        protected string EstiloFoto(object item)
-        {
-            dominio.Publicacion p = item as dominio.Publicacion;
-            if (p == null || p.Fotos == null || p.Fotos.Count == 0)
-                return "";
-
-            string url = HttpUtility.HtmlAttributeEncode(ResolveUrl("~/" + p.Fotos[0].Ruta));
-            return " style=\"background: url('" + url + "') center / cover no-repeat;\"";
-        }
-
-        protected string IconoFoto(object item)
-        {
-            dominio.Publicacion p = item as dominio.Publicacion;
-            if (p == null)
-                return "";
             if (p.Fotos != null && p.Fotos.Count > 0)
-                return "";
+            {
+                string ruta = p.Fotos[0].Ruta;
 
-            return "<i class=\"ti " + IconoCategoria(p.Categoria.Nombre) + "\" aria-hidden=\"true\"></i>";
+                if (!string.IsNullOrWhiteSpace(ruta))
+                    return ResolveUrl("~/" + ruta.TrimStart('/'));
+            }
+
+            return "";
         }
 
-        protected string TextoCarrera(object item)
+        protected string ObtenerCarrera(object dataItem)
         {
-            dominio.Publicacion p = item as dominio.Publicacion;
-            if (p == null)
-                return "";
+            dominio.Publicacion p = (dominio.Publicacion)dataItem;
 
-            string carrera = p.Carrera == null ? "Todas las carreras" : p.Carrera.Nombre;
-            string modalidad = p.Modalidad == ModalidadPublicacion.Intercambio ? "Intercambio" : "Donación";
-            return carrera + " · " + modalidad;
+            return p.Carrera == null
+                ? "Todas las carreras"
+                : p.Carrera.Nombre;
+        }
+
+        protected string ObtenerModalidad(object dataItem)
+        {
+            dominio.Publicacion p = (dominio.Publicacion)dataItem;
+
+            return p.Modalidad == ModalidadPublicacion.Donacion
+                ? "Donación"
+                : "Intercambio";
+        }
+
+        protected string ObtenerDetalle(object dataItem)
+        {
+            dominio.Publicacion p = (dominio.Publicacion)dataItem;
+
+            return ResolveUrl(
+                "~/DetallePublicacion.aspx?id=" + p.Id);
+        }
+
+        protected string TextoSeguro(object valor)
+        {
+            return HttpUtility.HtmlEncode(
+                Convert.ToString(valor) ?? "");
         }
     }
 }

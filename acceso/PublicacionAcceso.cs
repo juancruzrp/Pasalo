@@ -46,159 +46,258 @@ namespace acceso
                 }
             }
 
-            // Publicaciones disponibles para el catálogo.
-            // idCarrera / idCategoria = 0 significa "sin filtrar". Las publicaciones sin carrera
-            // ("Todas las carreras") se muestran siempre, sea cual sea la carrera elegida.
-            public List<Publicacion> ListarDisponibles(int idCarrera, int idCategoria, bool masRecientes)
+
+
+        public List<Publicacion> ListarDisponibles(
+            int idCategoria = 0,
+            int idCarrera = 0,
+            string busqueda = "",
+            bool masRecientes = true)
+        {
+            List<Publicacion> publicaciones = new List<Publicacion>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
             {
-                List<Publicacion> lista = new List<Publicacion>();
-                string orden = masRecientes ? "DESC" : "ASC";
+                string consulta = @"
+            SELECT
+                p.IdPublicacion,
+                p.Titulo,
+                p.Descripcion,
+                p.Modalidad,
+                p.Estado,
+                p.FechaPublicacion,
+                c.IdCategoria,
+                c.Nombre AS CategoriaNombre,
+                ca.IdCarrera,
+                ca.Nombre AS CarreraNombre,
+                f.Ruta AS FotoPrincipal
+            FROM Publicacion p
+            INNER JOIN Categoria c
+                ON c.IdCategoria = p.IdCategoria
+            LEFT JOIN Carrera ca
+                ON ca.IdCarrera = p.IdCarrera
+            OUTER APPLY (
+                SELECT TOP 1 fp.Ruta
+                FROM FotoPublicacion fp
+                WHERE fp.IdPublicacion = p.IdPublicacion
+                ORDER BY fp.Orden, fp.IdFoto
+            ) f
+            WHERE p.Estado = 0
+              AND (@categoria = 0 OR p.IdCategoria = @categoria)
+              AND (@carrera = 0 OR p.IdCarrera = @carrera)
+              AND (
+                  @busqueda = ''
+                  OR p.Titulo LIKE '%' + @busqueda + '%'
+                  OR p.Descripcion LIKE '%' + @busqueda + '%'
+              )
+            ORDER BY p.FechaPublicacion " +
+                    (masRecientes ? "DESC" : "ASC") +
+                    ", p.IdPublicacion " +
+                    (masRecientes ? "DESC" : "ASC");
 
-                AccesoDatos datos = new AccesoDatos();
-                try
+                datos.SetearConsulta(consulta);
+                datos.SetearParametro("@categoria", idCategoria);
+                datos.SetearParametro("@carrera", idCarrera);
+                datos.SetearParametro("@busqueda", busqueda ?? "");
+
+                datos.EjecutarLectura();
+
+                while (datos.Lector.Read())
                 {
-                    datos.SetearConsulta(
-                        "SELECT p.IdPublicacion, p.Titulo, p.Modalidad, p.Estado, p.FechaPublicacion, " +
-                        "c.IdCategoria, c.Nombre AS Categoria, ca.IdCarrera, ca.Nombre AS Carrera, " +
-                        "(SELECT TOP 1 f.Ruta FROM FotoPublicacion f WHERE f.IdPublicacion = p.IdPublicacion ORDER BY f.Orden, f.IdFoto) AS Foto " +
-                        "FROM Publicacion p " +
-                        "INNER JOIN Categoria c ON c.IdCategoria = p.IdCategoria " +
-                        "LEFT JOIN Carrera ca ON ca.IdCarrera = p.IdCarrera " +
-                        "WHERE p.Estado = 0 " +
-                        "AND (@idCarrera = 0 OR p.IdCarrera IS NULL OR p.IdCarrera = @idCarrera) " +
-                        "AND (@idCategoria = 0 OR p.IdCategoria = @idCategoria) " +
-                        "ORDER BY p.FechaPublicacion " + orden + ", p.IdPublicacion " + orden);
-                    datos.SetearParametro("@idCarrera", idCarrera);
-                    datos.SetearParametro("@idCategoria", idCategoria);
-                    datos.EjecutarLectura();
-
-                    while (datos.Lector.Read())
-                    {
-                        Publicacion p = new Publicacion();
-                        p.Id = (int)datos.Lector["IdPublicacion"];
-                        p.Titulo = (string)datos.Lector["Titulo"];
-                        p.Modalidad = (ModalidadPublicacion)(byte)datos.Lector["Modalidad"];
-                        p.Estado = (EstadoPublicacion)(byte)datos.Lector["Estado"];
-                        p.FechaPublicacion = (DateTime)datos.Lector["FechaPublicacion"];
-                        p.Categoria = new Categoria
-                        {
-                            Id = (int)datos.Lector["IdCategoria"],
-                            Nombre = (string)datos.Lector["Categoria"]
-                        };
-
-                        if (!(datos.Lector["IdCarrera"] is DBNull))
-                        {
-                            p.Carrera = new Carrera
-                            {
-                                Id = (int)datos.Lector["IdCarrera"],
-                                Nombre = (string)datos.Lector["Carrera"]
-                            };
-                        }
-
-                        if (!(datos.Lector["Foto"] is DBNull))
-                            p.Fotos.Add(new FotoPublicacion { Ruta = (string)datos.Lector["Foto"], Orden = 0 });
-
-                        lista.Add(p);
-                    }
-                    return lista;
-                }
-                finally
-                {
-                    datos.CerrarConexion();
-                }
-            }
-
-            // Una publicación por Id (cualquier estado) con categoría, carrera y fotos. null si no existe.
-            public Publicacion ObtenerPorId(int id)
-            {
-                AccesoDatos datos = new AccesoDatos();
-                try
-                {
-                    datos.SetearConsulta(
-                        "SELECT p.IdPublicacion, p.Titulo, p.Descripcion, p.Modalidad, p.Estado, p.FechaPublicacion, " +
-                        "c.IdCategoria, c.Nombre AS Categoria, ca.IdCarrera, ca.Nombre AS Carrera, " +
-                        "u.IdUsuario, u.Nombre AS DuenoNombre, u.FechaRegistro AS DuenoDesde, uc.Nombre AS DuenoCarrera " +
-                        "FROM Publicacion p " +
-                        "INNER JOIN Categoria c ON c.IdCategoria = p.IdCategoria " +
-                        "LEFT JOIN Carrera ca ON ca.IdCarrera = p.IdCarrera " +
-                        "INNER JOIN Usuario u ON u.IdUsuario = p.IdUsuario " +
-                        "LEFT JOIN Carrera uc ON uc.IdCarrera = u.IdCarrera " +
-                        "WHERE p.IdPublicacion = @id");
-                    datos.SetearParametro("@id", id);
-                    datos.EjecutarLectura();
-
-                    if (!datos.Lector.Read())
-                        return null;
-
                     Publicacion p = new Publicacion();
-                    p.Id = (int)datos.Lector["IdPublicacion"];
-                    p.Titulo = (string)datos.Lector["Titulo"];
-                    p.Descripcion = datos.Lector["Descripcion"] is DBNull ? "" : (string)datos.Lector["Descripcion"];
-                    p.Modalidad = (ModalidadPublicacion)(byte)datos.Lector["Modalidad"];
-                    p.Estado = (EstadoPublicacion)(byte)datos.Lector["Estado"];
-                    p.FechaPublicacion = (DateTime)datos.Lector["FechaPublicacion"];
+
+                    p.Id = Convert.ToInt32(
+                        datos.Lector["IdPublicacion"]);
+
+                    p.Titulo = datos.Lector["Titulo"].ToString();
+                    p.Descripcion = datos.Lector["Descripcion"].ToString();
+
+                    p.Modalidad = (ModalidadPublicacion)
+                        Convert.ToByte(datos.Lector["Modalidad"]);
+
+                    p.Estado = (EstadoPublicacion)
+                        Convert.ToByte(datos.Lector["Estado"]);
+
+                    p.FechaPublicacion = Convert.ToDateTime(
+                        datos.Lector["FechaPublicacion"]);
+
                     p.Categoria = new Categoria
                     {
-                        Id = (int)datos.Lector["IdCategoria"],
-                        Nombre = (string)datos.Lector["Categoria"]
+                        Id = Convert.ToInt32(
+                            datos.Lector["IdCategoria"]),
+                        Nombre = datos.Lector["CategoriaNombre"].ToString()
                     };
-                    if (!(datos.Lector["IdCarrera"] is DBNull))
-                        p.Carrera = new Carrera { Id = (int)datos.Lector["IdCarrera"], Nombre = (string)datos.Lector["Carrera"] };
-                    p.Dueno = new Usuario
-                    {
-                        IdUsuario = (int)datos.Lector["IdUsuario"],
-                        Nombre = (string)datos.Lector["DuenoNombre"],
-                        FechaRegistro = (DateTime)datos.Lector["DuenoDesde"],
-                        CarreraNombre = datos.Lector["DuenoCarrera"] is DBNull ? null : (string)datos.Lector["DuenoCarrera"]
-                    };
-                    datos.CerrarConexion();
 
-                    // Fotos (segunda consulta, con el lector anterior ya cerrado)
-                    datos = new AccesoDatos();
-                    datos.SetearConsulta("SELECT IdFoto, Ruta, Orden FROM FotoPublicacion WHERE IdPublicacion = @id ORDER BY Orden, IdFoto");
-                    datos.SetearParametro("@id", id);
-                    datos.EjecutarLectura();
-                    while (datos.Lector.Read())
+                    if (datos.Lector["IdCarrera"] != DBNull.Value)
+                    {
+                        p.Carrera = new Carrera
+                        {
+                            Id = Convert.ToInt32(
+                                datos.Lector["IdCarrera"]),
+                            Nombre = datos.Lector["CarreraNombre"].ToString()
+                        };
+                    }
+
+                    if (datos.Lector["FotoPrincipal"] != DBNull.Value)
+                    {
                         p.Fotos.Add(new FotoPublicacion
                         {
-                            Id = (int)datos.Lector["IdFoto"],
-                            Ruta = (string)datos.Lector["Ruta"],
-                            Orden = Convert.ToInt32(datos.Lector["Orden"])
+                            Ruta = datos.Lector["FotoPrincipal"].ToString(),
+                            Orden = 0
                         });
-                    return p;
+                    }
+
+                    publicaciones.Add(p);
                 }
-                finally
-                {
-                    datos.CerrarConexion();
-                }
+
+                return publicaciones;
             }
-
-            // Cuántas publicaciones disponibles hay por categoría (Id de categoría -> cantidad),
-            // respetando el filtro de carrera, para los contadores del catálogo.
-            public Dictionary<int, int> ContarDisponiblesPorCategoria(int idCarrera)
+            finally
             {
-                Dictionary<int, int> cuentas = new Dictionary<int, int>();
-
-                AccesoDatos datos = new AccesoDatos();
-                try
-                {
-                    datos.SetearConsulta(
-                        "SELECT IdCategoria, COUNT(*) AS Cantidad FROM Publicacion " +
-                        "WHERE Estado = 0 AND (@idCarrera = 0 OR IdCarrera IS NULL OR IdCarrera = @idCarrera) " +
-                        "GROUP BY IdCategoria");
-                    datos.SetearParametro("@idCarrera", idCarrera);
-                    datos.EjecutarLectura();
-
-                    while (datos.Lector.Read())
-                        cuentas[(int)datos.Lector["IdCategoria"]] = (int)datos.Lector["Cantidad"];
-
-                    return cuentas;
-                }
-                finally
-                {
-                    datos.CerrarConexion();
-                }
+                datos.CerrarConexion();
             }
         }
+
+
+
+        public Publicacion ObtenerPorId(int id)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            Publicacion publicacion = null;
+
+            try
+            {
+                datos.SetearConsulta(@"
+            SELECT
+                p.IdPublicacion,
+                p.Titulo,
+                p.Descripcion,
+                p.Modalidad,
+                p.Estado,
+                p.FechaPublicacion,
+                c.IdCategoria,
+                c.Nombre AS CategoriaNombre,
+                ca.IdCarrera,
+                ca.Nombre AS CarreraNombre,
+                u.IdUsuario,
+                u.Nombre AS UsuarioNombre,
+                u.FechaRegistro AS UsuarioFechaRegistro
+            FROM Publicacion p
+            INNER JOIN Categoria c
+                ON p.IdCategoria = c.IdCategoria
+            LEFT JOIN Carrera ca
+                ON p.IdCarrera = ca.IdCarrera
+            INNER JOIN Usuario u
+                ON p.IdUsuario = u.IdUsuario
+            WHERE p.IdPublicacion = @id");
+
+                datos.SetearParametro("@id", id);
+                datos.EjecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    publicacion = new Publicacion
+                    {
+                        Id = Convert.ToInt32(
+                            datos.Lector["IdPublicacion"]),
+
+                        Titulo = datos.Lector["Titulo"].ToString(),
+
+                        Descripcion = datos.Lector["Descripcion"].ToString(),
+
+                        Modalidad = (ModalidadPublicacion)
+                            Convert.ToByte(datos.Lector["Modalidad"]),
+
+                        Estado = (EstadoPublicacion)
+                            Convert.ToByte(datos.Lector["Estado"]),
+
+                        FechaPublicacion = Convert.ToDateTime(
+                            datos.Lector["FechaPublicacion"]),
+
+                        Categoria = new Categoria
+                        {
+                            Id = Convert.ToInt32(
+                                datos.Lector["IdCategoria"]),
+                            Nombre = datos.Lector["CategoriaNombre"].ToString()
+                        },
+
+                        Dueno = new Usuario
+                        {
+                            IdUsuario = Convert.ToInt32(
+                                datos.Lector["IdUsuario"]),
+                            Nombre = datos.Lector["UsuarioNombre"].ToString(),
+                            FechaRegistro = Convert.ToDateTime(
+                                datos.Lector["UsuarioFechaRegistro"])
+                        }
+                    };
+
+                    if (datos.Lector["IdCarrera"] != DBNull.Value)
+                    {
+                        publicacion.Carrera = new Carrera
+                        {
+                            Id = Convert.ToInt32(
+                                datos.Lector["IdCarrera"]),
+                            Nombre = datos.Lector["CarreraNombre"].ToString()
+                        };
+                    }
+                }
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+
+            if (publicacion == null)
+                return null;
+
+            AccesoDatos datosFotos = new AccesoDatos();
+
+            try
+            {
+                datosFotos.SetearConsulta(@"
+            SELECT IdFoto, Ruta, Orden
+            FROM FotoPublicacion
+            WHERE IdPublicacion = @id
+            ORDER BY Orden, IdFoto");
+
+                datosFotos.SetearParametro("@id", id);
+                datosFotos.EjecutarLectura();
+
+                while (datosFotos.Lector.Read())
+                {
+                    publicacion.Fotos.Add(new FotoPublicacion
+                    {
+                        Id = Convert.ToInt32(
+                            datosFotos.Lector["IdFoto"]),
+
+                        Ruta = datosFotos.Lector["Ruta"].ToString(),
+
+                        Orden = Convert.ToInt32(
+                            datosFotos.Lector["Orden"])
+                    });
+                }
+            }
+            finally
+            {
+                datosFotos.CerrarConexion();
+            }
+
+            return publicacion;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
+}
 

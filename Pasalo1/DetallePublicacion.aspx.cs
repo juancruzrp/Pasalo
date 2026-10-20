@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using System;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.UI;
 using dominio;
@@ -6,46 +8,58 @@ using negocio;
 
 namespace Pasalo1
 {
-    public partial class DetallePublicacion : System.Web.UI.Page
+    public partial class DetallePublicacion : Page
     {
-        protected dominio.Publicacion Pub;
+        protected dominio.Publicacion PublicacionActual { get; private set; }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            int id;
-            if (!int.TryParse(Request.QueryString["id"], out id) || id <= 0)
-            {
-                Response.Redirect("Default.aspx", false);
-                Context.ApplicationInstance.CompleteRequest();
-                return;
-            }
-
-            try
-            {
-                Pub = new PublicacionNegocio().ObtenerPorId(id);
-            }
-            catch (Exception ex)
-            {
-                Session["Error"] = ex.ToString();
-                Response.Redirect("Error.aspx", false);
-                Context.ApplicationInstance.CompleteRequest();
-                return;
-            }
-
-            if (Pub == null)
-            {
-                Response.Redirect("Default.aspx", false);
-                Context.ApplicationInstance.CompleteRequest();
-            }
-        }
-
-        protected string Estado
+        protected string TituloSeguro
         {
             get
             {
-                if (Pub.Estado == EstadoPublicacion.Reservado) return "reservado";
-                if (Pub.Estado == EstadoPublicacion.Entregado) return "entregado";
-                return "disponible";
+                return HttpUtility.HtmlEncode(
+                    PublicacionActual.Titulo);
+            }
+        }
+
+        protected string DescripcionSegura
+        {
+            get
+            {
+                return HttpUtility.HtmlEncode(
+                    PublicacionActual.Descripcion)
+                    .Replace("\r\n", "\n")
+                    .Replace("\n", "<br />");
+            }
+        }
+
+        protected string CategoriaTexto
+        {
+            get
+            {
+                return HttpUtility.HtmlEncode(
+                    PublicacionActual.Categoria.Nombre);
+            }
+        }
+
+        protected string CarreraTexto
+        {
+            get
+            {
+                return PublicacionActual.Carrera == null
+                    ? "Todas las carreras"
+                    : HttpUtility.HtmlEncode(
+                        PublicacionActual.Carrera.Nombre);
+            }
+        }
+
+        protected string ModalidadTexto
+        {
+            get
+            {
+                return PublicacionActual.Modalidad ==
+                    ModalidadPublicacion.Donacion
+                    ? "Donación"
+                    : "Intercambio";
             }
         }
 
@@ -53,84 +67,280 @@ namespace Pasalo1
         {
             get
             {
-                if (Pub.Estado == EstadoPublicacion.Reservado) return "Reservado";
-                if (Pub.Estado == EstadoPublicacion.Entregado) return "Entregado";
-                return "Disponible";
-            }
-        }
-
-        protected bool EsIntercambio
-        {
-            get { return Pub.Modalidad == ModalidadPublicacion.Intercambio; }
-        }
-
-        protected string ModalidadTexto
-        {
-            get { return EsIntercambio ? "Intercambio" : "Donación"; }
-        }
-
-        protected string CarreraTexto
-        {
-            get { return Pub.Carrera == null ? "Todas las carreras" : Pub.Carrera.Nombre; }
-        }
-
-        protected string IconoCategoria
-        {
-            get
-            {
-                string n = (Pub.Categoria.Nombre ?? "").ToLowerInvariant();
-                if (n.StartsWith("ropa")) return "ti-shirt";
-                if (n.StartsWith("libro")) return "ti-book";
-                if (n.StartsWith("apunte")) return "ti-pencil";
-                if (n.StartsWith("electr")) return "ti-device-laptop";
-                return "ti-box";
-            }
-        }
-
-        protected string FotoHtml
-        {
-            get
-            {
-                if (Pub.Fotos != null && Pub.Fotos.Count > 0)
+                switch (PublicacionActual.Estado)
                 {
-                    string url = HttpUtility.HtmlAttributeEncode(ResolveUrl("~/" + Pub.Fotos[0].Ruta));
-                    return "<img src=\"" + url + "\" alt=\"Foto de " + HttpUtility.HtmlAttributeEncode(Pub.Titulo) + "\" style=\"width:100%;height:100%;object-fit:cover;border-radius:inherit\" />";
+                    case EstadoPublicacion.Reservado:
+                        return "Reservado";
+
+                    case EstadoPublicacion.Entregado:
+                        return "Entregado";
+
+                    default:
+                        return "Disponible";
                 }
-                return "<i class=\"ti " + IconoCategoria + "\" aria-hidden=\"true\"></i>";
             }
         }
 
-        protected string DuenoIniciales
+        protected string EstadoCss
         {
             get
             {
-                string[] partes = (Pub.Dueno.Nombre ?? "").Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if (partes.Length == 0) return "?";
-                if (partes.Length == 1) return partes[0].Substring(0, 1).ToUpperInvariant();
-                return (partes[0].Substring(0, 1) + partes[partes.Length - 1].Substring(0, 1)).ToUpperInvariant();
+                return EstadoTexto.ToLowerInvariant();
             }
         }
 
-        protected string DuenoDetalle
+        protected string NombreDueno
         {
             get
             {
-                string carrera = string.IsNullOrEmpty(Pub.Dueno.CarreraNombre) ? "Estudiante" : "Estudiante de " + Pub.Dueno.CarreraNombre;
-                return carrera + " · Miembro desde " + Pub.Dueno.FechaRegistro.Year;
+                return HttpUtility.HtmlEncode(
+                    PublicacionActual.Dueno.Nombre);
             }
         }
 
-        protected string PublicadoHace
+        protected string InicialesDueno
         {
             get
             {
-                TimeSpan t = DateTime.UtcNow - Pub.FechaPublicacion;
-                if (t.TotalMinutes < 1) return "Publicado recién";
-                if (t.TotalHours < 1) return "Publicado hace " + (int)t.TotalMinutes + " min";
-                if (t.TotalDays < 1) return "Publicado hace " + (int)t.TotalHours + " h";
-                int d = (int)t.TotalDays;
-                return "Publicado hace " + d + (d == 1 ? " día" : " días");
+                string nombre = PublicacionActual.Dueno.Nombre ?? "";
+                string[] partes = nombre.Split(
+                    new[] { ' ' },
+                    StringSplitOptions.RemoveEmptyEntries);
+
+                if (partes.Length == 0)
+                    return "?";
+
+                string iniciales = partes[0].Substring(0, 1);
+
+                if (partes.Length > 1)
+                    iniciales += partes[partes.Length - 1].Substring(0, 1);
+
+                return HttpUtility.HtmlEncode(
+                    iniciales.ToUpperInvariant());
             }
         }
+
+        protected string FechaPublicacionTexto
+        {
+            get
+            {
+                // SQL Server guarda la fecha en UTC.
+                DateTime fecha = DateTime.SpecifyKind(
+                    PublicacionActual.FechaPublicacion,
+                    DateTimeKind.Utc);
+
+                return fecha.ToLocalTime().ToString("dd/MM/yyyy");
+            }
+        }
+
+        protected string FechaRegistroTexto
+        {
+            get
+            {
+                DateTime fecha = DateTime.SpecifyKind(
+                    PublicacionActual.Dueno.FechaRegistro,
+                    DateTimeKind.Utc);
+
+                return fecha.ToLocalTime().ToString("MM/yyyy");
+            }
+        }
+
+        protected bool EsPropietario
+        {
+            get
+            {
+                dominio.Usuario usuario =
+                    Session["Usuario"] as dominio.Usuario;
+
+                return usuario != null &&
+                       usuario.IdUsuario ==
+                       PublicacionActual.Dueno.IdUsuario;
+            }
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            int id;
+
+            if (!int.TryParse(Request.QueryString["id"], out id)
+                || id <= 0)
+            {
+                MostrarNoEncontrada();
+                return;
+            }
+
+            try
+            {
+                PublicacionNegocio negocio =
+                    new PublicacionNegocio();
+
+                PublicacionActual = negocio.ObtenerPorId(id);
+
+                if (PublicacionActual == null)
+                {
+                    MostrarNoEncontrada();
+                    return;
+                }
+
+                pnlDetalle.Visible = true;
+                pnlNoEncontrada.Visible = false;
+
+                rptFotos.DataSource = PublicacionActual.Fotos;
+                rptFotos.DataBind();
+
+                pnlSinFotos.Visible =
+                    PublicacionActual.Fotos.Count == 0;
+
+                pnlDisponible.Visible =
+                    PublicacionActual.Estado ==
+                    EstadoPublicacion.Disponible;
+
+                pnlReservado.Visible =
+                    PublicacionActual.Estado ==
+                    EstadoPublicacion.Reservado;
+
+                pnlEntregado.Visible =
+                    PublicacionActual.Estado ==
+                    EstadoPublicacion.Entregado;
+
+                ConfigurarSolicitud();
+
+            }
+            catch (Exception)
+            {
+                pnlDetalle.Visible = false;
+                pnlNoEncontrada.Visible = true;
+
+                lblNoEncontrada.Text =
+                    "No se pudo cargar la publicación. " +
+                    "Intentá nuevamente más tarde.";
+            }
+        }
+
+        private void MostrarNoEncontrada()
+        {
+            Response.StatusCode = 404;
+            pnlDetalle.Visible = false;
+            pnlNoEncontrada.Visible = true;
+            lblNoEncontrada.Text =
+                "La publicación no existe o ya no está disponible.";
+        }
+
+        protected string ObtenerRutaFoto(object ruta)
+        {
+            string valor = Convert.ToString(ruta);
+
+            if (string.IsNullOrWhiteSpace(valor))
+                return "";
+
+            return ResolveUrl("~/" + valor.TrimStart('/'));
+        }
+
+
+
+        private void ConfigurarSolicitud()
+        {
+            pnlPropietario.Visible = false;
+            pnlYaSolicitado.Visible = false;
+            pnlFormularioSolicitud.Visible = false;
+            pnlObjetoOfrecido.Visible = false;
+            pnlMensajeSolicitud.Visible = false;
+
+            if (PublicacionActual.Estado !=
+                EstadoPublicacion.Disponible)
+                return;
+
+            dominio.Usuario usuario =
+                Session["Usuario"] as dominio.Usuario;
+
+            if (usuario == null)
+            {
+                pnlMensajeSolicitud.Visible = true;
+                lblMensajeSolicitud.Text =
+                    "Iniciá sesión para solicitar este artículo.";
+                return;
+            }
+
+            if (usuario.IdUsuario ==
+                PublicacionActual.Dueno.IdUsuario)
+            {
+                pnlPropietario.Visible = true;
+                return;
+            }
+
+            SolicitudNegocio solicitudNegocio =
+                new SolicitudNegocio();
+
+            if (solicitudNegocio.YaSolicito(
+                PublicacionActual.Id, usuario.IdUsuario))
+            {
+                pnlYaSolicitado.Visible = true;
+                return;
+            }
+
+            pnlFormularioSolicitud.Visible = true;
+
+            bool esIntercambio =
+                PublicacionActual.Modalidad ==
+                ModalidadPublicacion.Intercambio;
+
+            pnlObjetoOfrecido.Visible = esIntercambio;
+
+            btnSolicitar.Text = esIntercambio
+                ? "Enviar propuesta de intercambio"
+                : "Solicitar este objeto";
+        }
+
+
+        protected void btnSolicitar_Click(object sender, EventArgs e)
+        {
+            dominio.Usuario usuario =
+                Session["Usuario"] as dominio.Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
+                return;
+            }
+
+            int idPublicacion;
+
+            if (!int.TryParse(
+                Request.QueryString["id"], out idPublicacion))
+            {
+                return;
+            }
+
+            try
+            {
+                SolicitudNegocio negocio =
+                    new SolicitudNegocio();
+
+                negocio.Solicitar(
+                    idPublicacion,
+                    usuario.IdUsuario,
+                    txtObjetoOfrecido.Text);
+
+                pnlFormularioSolicitud.Visible = false;
+                pnlYaSolicitado.Visible = true;
+                pnlMensajeSolicitud.Visible = false;
+            }
+            catch (NegocioException ex)
+            {
+                pnlMensajeSolicitud.Visible = true;
+                lblMensajeSolicitud.Text =
+                    HttpUtility.HtmlEncode(ex.Message);
+            }
+            catch (Exception)
+            {
+                pnlMensajeSolicitud.Visible = true;
+                lblMensajeSolicitud.Text =
+                    "No se pudo enviar la solicitud. Intentá nuevamente.";
+            }
+        }
+
+
+
     }
 }
