@@ -16,5 +16,6 @@ namespace dominio
         public int Rol { get; set; }
         public bool Activo { get; set; }
         public DateTime FechaRegistro { get; set; }
+        public string CarreraNombre { get; set; }   // solo para mostrar (no se guarda en la tabla Usuario)
     }
 }

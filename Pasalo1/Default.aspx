@@ -28,22 +28,16 @@
 
         <aside class="lateral" aria-label="Filtros">
             <asp:Label ID="lblCarrera" runat="server" AssociatedControlID="ddlCarrera" CssClass="rotulo" Text="Filtrar por carrera" />
-            <asp:DropDownList ID="ddlCarrera" runat="server" CssClass="campo" style="margin-bottom:24px">
-                <asp:ListItem Text="Todas las carreras" Value="0" />
-                <asp:ListItem Text="Ingeniería en Sistemas" Value="1" />
-                <asp:ListItem Text="Ingeniería Industrial" Value="2" />
-                <asp:ListItem Text="Contador Público" Value="3" />
-            </asp:DropDownList>
+            <asp:DropDownList ID="ddlCarrera" runat="server" CssClass="campo" AutoPostBack="true" style="margin-bottom:24px" />
 
             <nav aria-label="Categorías">
                 <span class="rotulo">Categorías</span>
                 <ul class="categorias">
-                    <li><a href="#" aria-current="true"><i class="ti ti-layout-grid" aria-hidden="true"></i>Todas<span class="cuenta">337</span></a></li>
-                    <li><a href="#"><i class="ti ti-shirt" aria-hidden="true"></i>Ropa<span class="cuenta">124</span></a></li>
-                    <li><a href="#"><i class="ti ti-book" aria-hidden="true"></i>Libros<span class="cuenta">86</span></a></li>
-                    <li><a href="#"><i class="ti ti-pencil" aria-hidden="true"></i>Apuntes<span class="cuenta">54</span></a></li>
-                    <li><a href="#"><i class="ti ti-device-laptop" aria-hidden="true"></i>Electrónicos<span class="cuenta">32</span></a></li>
-                    <li><a href="#"><i class="ti ti-box" aria-hidden="true"></i>Otros<span class="cuenta">41</span></a></li>
+                    <asp:Repeater ID="rptCategorias" runat="server">
+                        <ItemTemplate>
+                            <li><a href="<%#: Eval("Url") %>"<%# (bool)Eval("Actual") ? " aria-current=\"true\"" : "" %>><i class="ti <%#: Eval("Icono") %>" aria-hidden="true"></i><%#: Eval("Nombre") %><span class="cuenta"><%#: Eval("Cantidad") %></span></a></li>
+                        </ItemTemplate>
+                    </asp:Repeater>
                 </ul>
             </nav>
 
@@ -58,96 +52,39 @@
             <div class="encabezado">
                 <div>
                     <h1 id="t-catalogo">Objetos disponibles</h1>
-                    <p class="suave">Mostrando 6 de 337 objetos para donar o intercambiar</p>
+                    <p class="suave"><asp:Label ID="lblResumen" runat="server" /></p>
                 </div>
                 <div class="orden">
                     <asp:Label ID="lblOrden" runat="server" AssociatedControlID="ddlOrden" Text="Ordenar por" />
-                    <asp:DropDownList ID="ddlOrden" runat="server" CssClass="campo">
-                        <asp:ListItem Text="Más recientes" />
-                        <asp:ListItem Text="Más antiguos" />
+                    <asp:DropDownList ID="ddlOrden" runat="server" CssClass="campo" AutoPostBack="true">
+                        <asp:ListItem Text="Más recientes" Value="recientes" />
+                        <asp:ListItem Text="Más antiguos" Value="antiguos" />
                     </asp:DropDownList>
                 </div>
             </div>
 
-            <div class="grilla">
-                <article class="tarjeta">
-                    <div class="foto"><span class="chip">Libros</span><i class="ti ti-book" aria-hidden="true"></i></div>
-                    <div class="tarjeta-cuerpo">
-                        <h3>Cálculo de una variable - Stewart</h3>
-                        <p class="suave">Todas las carreras</p>
-                        <div class="tarjeta-pie">
-                            <span class="estado estado--disponible">Disponible</span>
-                            <a class="ir" href="#" aria-label="Ver detalle de Cálculo de una variable - Stewart"><i class="ti ti-arrow-right" aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-                </article>
+            <asp:Panel ID="pnlGrilla" runat="server" CssClass="grilla">
+                <asp:Repeater ID="rptPublicaciones" runat="server">
+                    <ItemTemplate>
+                        <article class="tarjeta">
+                            <div class="foto"<%# EstiloFoto(Container.DataItem) %>><span class="chip"><%#: Eval("Categoria.Nombre") %></span><%# IconoFoto(Container.DataItem) %></div>
+                            <div class="tarjeta-cuerpo">
+                                <h3><%#: Eval("Titulo") %></h3>
+                                <p class="suave"><%#: TextoCarrera(Container.DataItem) %></p>
+                                <div class="tarjeta-pie">
+                                    <span class="estado estado--disponible">Disponible</span>
+                                    <a class="ir" href="DetallePublicacion.aspx?id=<%#: Eval("Id") %>" aria-label="Ver detalle de <%#: Eval("Titulo") %>"><i class="ti ti-arrow-right" aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </article>
+                    </ItemTemplate>
+                </asp:Repeater>
+            </asp:Panel>
 
-                <article class="tarjeta">
-                    <div class="foto"><span class="chip">Ropa</span><i class="ti ti-shirt" aria-hidden="true"></i></div>
-                    <div class="tarjeta-cuerpo">
-                        <h3>Bata de laboratorio blanca, talle M</h3>
-                        <p class="suave">Ingeniería Química</p>
-                        <div class="tarjeta-pie">
-                            <span class="estado estado--disponible">Disponible</span>
-                            <a class="ir" href="#" aria-label="Ver detalle de Bata de laboratorio blanca, talle M"><i class="ti ti-arrow-right" aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="tarjeta">
-                    <div class="foto"><span class="chip">Electrónicos</span><i class="ti ti-calculator" aria-hidden="true"></i></div>
-                    <div class="tarjeta-cuerpo">
-                        <h3>Calculadora científica Casio FX-991</h3>
-                        <p class="suave">Todas las carreras</p>
-                        <div class="tarjeta-pie">
-                            <span class="estado estado--disponible">Disponible</span>
-                            <a class="ir" href="DetallePublicacion.aspx" aria-label="Ver detalle de Calculadora científica Casio FX-991"><i class="ti ti-arrow-right" aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="tarjeta">
-                    <div class="foto"><span class="chip">Apuntes</span><i class="ti ti-pencil" aria-hidden="true"></i></div>
-                    <div class="tarjeta-cuerpo">
-                        <h3>Apuntes de Análisis Matemático I</h3>
-                        <p class="suave">Ingeniería en Sistemas</p>
-                        <div class="tarjeta-pie">
-                            <span class="estado estado--disponible">Disponible</span>
-                            <a class="ir" href="#" aria-label="Ver detalle de Apuntes de Análisis Matemático I"><i class="ti ti-arrow-right" aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="tarjeta">
-                    <div class="foto"><span class="chip">Otros</span><i class="ti ti-ruler-2" aria-hidden="true"></i></div>
-                    <div class="tarjeta-cuerpo">
-                        <h3>Regla T profesional para dibujo</h3>
-                        <p class="suave">Ingeniería Mecánica</p>
-                        <div class="tarjeta-pie">
-                            <span class="estado estado--disponible">Disponible</span>
-                            <a class="ir" href="#" aria-label="Ver detalle de Regla T profesional para dibujo"><i class="ti ti-arrow-right" aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="tarjeta">
-                    <div class="foto"><span class="chip">Electrónicos</span><i class="ti ti-device-tablet" aria-hidden="true"></i></div>
-                    <div class="tarjeta-cuerpo">
-                        <h3>Tablet con pantalla dañada (para repuestos)</h3>
-                        <p class="suave">Todas las carreras</p>
-                        <div class="tarjeta-pie">
-                            <span class="estado estado--disponible">Disponible</span>
-                            <a class="ir" href="#" aria-label="Ver detalle de Tablet con pantalla dañada"><i class="ti ti-arrow-right" aria-hidden="true"></i></a>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-            <nav class="paginacion" aria-label="Paginación">
-                <button type="button" aria-label="Página anterior"><i class="ti ti-chevron-left" aria-hidden="true"></i></button>
-                <span>Página 1 de 56</span>
-                <button type="button" aria-label="Página siguiente"><i class="ti ti-chevron-right" aria-hidden="true"></i></button>
-            </nav>
+            <asp:Panel ID="pnlVacio" runat="server" Visible="false" style="padding: 48px 24px; text-align: center; border: 1px dashed var(--color-borde); border-radius: 16px;">
+                <p><asp:Label ID="lblVacio" runat="server" /></p>
+                <p><a href="Publicacion.aspx">Publicar un artículo</a></p>
+            </asp:Panel>
         </section>
     </div>
 

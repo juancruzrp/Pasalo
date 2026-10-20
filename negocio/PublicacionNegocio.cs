@@ -26,6 +26,24 @@ namespace negocio
             public List<Categoria> ListarCategorias() { return _catalogo.ListarCategorias(); }
             public List<Carrera> ListarCarreras() { return _catalogo.ListarCarreras(); }
 
+            // Catálogo: publicaciones disponibles (0 = sin filtro de carrera / categoría)
+            public List<Publicacion> ListarDisponibles(int idCarrera, int idCategoria, bool masRecientes)
+            {
+                return _acceso.ListarDisponibles(idCarrera, idCategoria, masRecientes);
+            }
+
+            // Detalle de una publicación (null si no existe)
+            public Publicacion ObtenerPorId(int id)
+            {
+                return _acceso.ObtenerPorId(id);
+            }
+
+            // Id de categoría -> cantidad de publicaciones disponibles
+            public Dictionary<int, int> ContarDisponiblesPorCategoria(int idCarrera)
+            {
+                return _acceso.ContarDisponiblesPorCategoria(idCarrera);
+            }
+
             //Devuelve el Id creado.
             // carpetaFisica: carpeta del servidor donde se guardan las fotos (ruta absoluta).
             public int Publicar(Publicacion pub, List<FotoSubida> fotos, string carpetaFisica)
