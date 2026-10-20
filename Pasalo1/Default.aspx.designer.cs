@@ -1,53 +1,30 @@
-﻿//------------------------------------------------------------------------------
-// <generado automáticamente>
-//     Este código fue generado por una herramienta.
-//
-//     Los cambios en este archivo podrían causar un comportamiento incorrecto y se perderán si
-//     se vuelve a generar el código. 
-// </generado automáticamente>
-//------------------------------------------------------------------------------
-
+﻿
 namespace Pasalo1
 {
-
-
     public partial class _Default
     {
-
-        /// <summary>
-        /// Control lblCarrera.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblCarrera;
 
-        /// <summary>
-        /// Control ddlCarrera.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlCarrera;
 
-        /// <summary>
-        /// Control lblOrden.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblCategoria;
+
+        protected global::System.Web.UI.WebControls.DropDownList ddlCategoria;
+
         protected global::System.Web.UI.WebControls.Label lblOrden;
 
-        /// <summary>
-        /// Control ddlOrden.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlOrden;
+
+        protected global::System.Web.UI.WebControls.Label lblCantidad;
+
+        protected global::System.Web.UI.WebControls.TextBox txtBuscar;
+
+        protected global::System.Web.UI.WebControls.Button btnBuscar;
+
+        protected global::System.Web.UI.WebControls.Label lblError;
+
+        protected global::System.Web.UI.WebControls.Panel pnlSinResultados;
+
+        protected global::System.Web.UI.WebControls.Repeater rptPublicaciones;
     }
 }
