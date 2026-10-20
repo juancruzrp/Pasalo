@@ -45,6 +45,7 @@
     <Compile Include="NegocioException.cs" />
     <Compile Include="PasswordHelper.cs" />
     <Compile Include="SolicitudNegocio.cs" />
+    <Compile Include="PerfilNegocio.cs" />
     <Compile Include="UsuarioNegocio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

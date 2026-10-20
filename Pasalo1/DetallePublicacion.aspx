@@ -292,7 +292,7 @@
 
                     <div class="donante-datos">
                         <p class="fila-titulo">
-                            <%= NombreDueno %>
+                            <a href="Perfil.aspx?id=<%= PublicacionActual.Dueno.IdUsuario %>"><%= NombreDueno %></a>
                         </p>
 
                         <p class="suave"

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Catalogo.cs" />
     <Compile Include="Solicitud.cs" />
+    <Compile Include="PerfilUsuario.cs" />
     <Compile Include="Publicacion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Usuario.cs" />

@@ -1,109 +1,104 @@
 ﻿<%@ Page Title="Mi perfil" Language="C#" MasterPageFile="~/Principal.Master" AutoEventWireup="true" CodeBehind="Perfil.aspx.cs" Inherits="Pasalo1.Perfil" %>
 
 <asp:Content ID="Contenido" ContentPlaceHolderID="MainContent" runat="server">
+    <% if (Datos != null) { %>
     <div class="perfil">
 
-        <%-- Datos de ejemplo: más adelante salen de la tabla Usuario y de las valoraciones --%>
+        <%-- Todos los datos salen de la base de datos (ver Perfil.aspx.cs y PerfilAcceso.cs) --%>
         <section class="panel perfil-cabecera" aria-labelledby="t-perfil">
             <div class="perfil-id">
-                <div class="avatar-grande" aria-hidden="true">SR</div>
+                <div class="avatar-grande" aria-hidden="true"><%: Iniciales %></div>
                 <div>
-                    <h1 id="t-perfil">Sofía Ramírez</h1>
-                    <p>Ingeniería Mecánica · Facultad de Ingeniería</p>
-                    <p class="suave" style="font-size:13px">Miembro desde 2024</p>
+                    <h1 id="t-perfil"><%: Datos.Nombre %></h1>
+                    <p><%: CarreraYFacultad %></p>
+                    <p class="suave" style="font-size:13px"><%: MiembroDesde %></p>
                 </div>
             </div>
             <div class="perfil-valoracion">
+                <% if (TieneValoraciones) { %>
                 <p>
-                    <span class="estrellas" aria-hidden="true"><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i><i class="ti ti-star-filled"></i></span>
-                    <span class="nota">4,8</span><span class="solo-lectores"> de 5 de reputación</span>
+                    <span class="estrellas" aria-hidden="true">
+                        <% for (int i = 1; i <= 5; i++) { %><i class="ti <%= i <= EstrellasLlenas ? "ti-star-filled" : "ti-star" %>"></i><% } %>
+                    </span>
+                    <span class="nota"><%: PromedioTexto %></span><span class="solo-lectores"> de 5 de reputación</span>
                 </p>
-                <p class="suave">23 intercambios exitosos</p>
+                <p class="suave"><%: Datos.CantidadValoraciones %> <%= Datos.CantidadValoraciones == 1 ? "valoración" : "valoraciones" %> · <%: ObjetosEntregadosTexto %></p>
+                <% } else { %>
+                <p class="suave">Sin valoraciones todavía</p>
+                <p class="suave"><%: ObjetosEntregadosTexto %></p>
+                <% } %>
             </div>
         </section>
 
         <nav class="pestanas" aria-label="Secciones del perfil">
-            <a href="Perfil.aspx?tab=publicaciones"<%= Actual("publicaciones") %>>Mis publicaciones</a>
+            <a href="Perfil.aspx?tab=publicaciones<%= SufijoId %>"<%= Actual("publicaciones") %>><%= EsPropio ? "Mis publicaciones" : "Publicaciones" %></a>
+            <% if (EsPropio) { %>
             <a href="Perfil.aspx?tab=historial"<%= Actual("historial") %>>Historial</a>
-            <a href="Perfil.aspx?tab=impacto"<%= Actual("impacto") %>>Impacto ambiental</a>
+            <% } %>
+            <a href="Perfil.aspx?tab=impacto<%= SufijoId %>"<%= Actual("impacto") %>>Impacto ambiental</a>
         </nav>
 
         <% if (TabActiva == "publicaciones") { %>
-        <ul class="lista">
-            <li class="fila">
-                <span class="fila-icono" aria-hidden="true"><i class="ti ti-pencil"></i></span>
-                <div class="fila-texto">
-                    <p class="fila-titulo">Apuntes de Análisis Matemático I</p>
-                    <p class="suave">Intercambio · publicada hace 3 días · <a class="enlace" href="#">2 solicitudes</a></p>
-                </div>
-                <span class="estado estado--disponible">Disponible</span>
-            </li>
-            <li class="fila">
-                <span class="fila-icono" aria-hidden="true"><i class="ti ti-calculator"></i></span>
-                <div class="fila-texto">
-                    <p class="fila-titulo">Calculadora científica Casio FX-991</p>
-                    <p class="suave">Donación · reservada para Lucas M.</p>
-                </div>
-                <span class="estado estado--reservado">Reservado</span>
-            </li>
-            <li class="fila">
-                <span class="fila-icono" aria-hidden="true"><i class="ti ti-shirt"></i></span>
-                <div class="fila-texto">
-                    <p class="fila-titulo">Campera de abrigo</p>
-                    <p class="suave">Donación · entregada el 12/09/2026</p>
-                </div>
-                <span class="estado estado--entregado">Entregado</span>
-            </li>
-        </ul>
+            <% if (Publicaciones.Count == 0) { %>
+            <div class="panel">
+                <p class="suave"><%= EsPropio ? "Todavía no publicaste ningún artículo." : "Esta persona no tiene publicaciones disponibles." %></p>
+                <% if (EsPropio) { %><a class="accion" href="Publicacion.aspx">Publicar un artículo</a><% } %>
+            </div>
+            <% } else { %>
+            <ul class="lista">
+                <% foreach (dominio.PublicacionPerfil p in Publicaciones) { %>
+                <li class="fila">
+                    <span class="fila-icono" aria-hidden="true"><i class="ti <%= IconoCategoria(p.Categoria) %>"></i></span>
+                    <div class="fila-texto">
+                        <p class="fila-titulo"><a href="DetallePublicacion.aspx?id=<%= p.Id %>"><%: p.Titulo %></a></p>
+                        <p class="suave"><%: TextoPublicacion(p) %><% if (EsPropio && p.SolicitudesPendientes > 0) { %> · <a class="enlace" href="DetallePublicacion.aspx?id=<%= p.Id %>"><%= p.SolicitudesPendientes %> <%= p.SolicitudesPendientes == 1 ? "solicitud" : "solicitudes" %></a><% } %></p>
+                    </div>
+                    <span class="estado estado--<%= ClaseEstado(p.Estado) %>"><%= TextoEstado(p.Estado) %></span>
+                </li>
+                <% } %>
+            </ul>
+            <% } %>
         <% } else if (TabActiva == "historial") { %>
-        <ul class="lista">
-            <li class="fila">
-                <span class="fila-icono" aria-hidden="true"><i class="ti ti-gift"></i></span>
-                <div class="fila-texto">
-                    <p class="fila-titulo">Campera de abrigo</p>
-                    <p class="suave">Donación con Lucas M. · 12/09/2026</p>
-                </div>
-                <p class="fila-der">Te valoró con 5 de 5</p>
-            </li>
-            <li class="fila">
-                <span class="fila-icono" aria-hidden="true"><i class="ti ti-arrows-exchange"></i></span>
-                <div class="fila-texto">
-                    <p class="fila-titulo">Libro de Física II</p>
-                    <p class="suave">Intercambio con Martina G. · 03/09/2026</p>
-                </div>
-                <p class="fila-der">Te valoró con 4 de 5</p>
-            </li>
-            <li class="fila">
-                <span class="fila-icono" aria-hidden="true"><i class="ti ti-gift"></i></span>
-                <div class="fila-texto">
-                    <p class="fila-titulo">Apuntes de Química</p>
-                    <p class="suave">Donación con Joaquín P. · 21/08/2026</p>
-                </div>
-                <p class="fila-der"><a class="enlace" href="#">Valorar</a></p>
-            </li>
-        </ul>
+            <% if (Historial.Count == 0) { %>
+            <div class="panel">
+                <p class="suave">Todavía no tenés donaciones o intercambios concretados. Cuando entregues o recibas un objeto, va a aparecer acá.</p>
+            </div>
+            <% } else { %>
+            <ul class="lista">
+                <% foreach (dominio.MovimientoHistorial m in Historial) { %>
+                <li class="fila">
+                    <span class="fila-icono" aria-hidden="true"><i class="ti <%= m.Modalidad == dominio.ModalidadPublicacion.Intercambio ? "ti-arrows-exchange" : "ti-gift" %>"></i></span>
+                    <div class="fila-texto">
+                        <p class="fila-titulo"><a href="DetallePublicacion.aspx?id=<%= m.IdPublicacion %>"><%: m.Titulo %></a></p>
+                        <p class="suave"><%: TextoModalidad(m.Modalidad) %> con <%: m.OtraPersona %><% if (m.FechaEntrega.HasValue) { %> · <%: FechaCorta(m.FechaEntrega) %><% } %></p>
+                    </div>
+                    <p class="fila-der"><%= m.PuntajeRecibido.HasValue ? "Te valoró con " + m.PuntajeRecibido.Value + " de 5" : "Sin valoración" %></p>
+                </li>
+                <% } %>
+            </ul>
+            <% } %>
         <% } else { %>
         <div class="impacto">
             <div class="col-apilada">
                 <div class="panel dato">
                     <span class="dato-icono" aria-hidden="true"><i class="ti ti-gift"></i></span>
                     <div>
-                        <p class="dato-valor">12 objetos</p>
+                        <p class="dato-valor"><%: Datos.ObjetosEntregados %> <%= Datos.ObjetosEntregados == 1 ? "objeto" : "objetos" %></p>
                         <p class="suave">Donados o intercambiados</p>
                     </div>
                 </div>
                 <div class="panel dato">
                     <span class="dato-icono dato-icono--acento" aria-hidden="true"><i class="ti ti-recycle"></i></span>
                     <div>
-                        <p class="dato-valor dato-valor--acento">38 kg</p>
-                        <p class="suave">De residuos evitados en el campus</p>
+                        <p class="dato-valor dato-valor--acento"><%: Kg(Datos.KgEvitados) %></p>
+                        <p class="suave">De residuos evitados (estimado)</p>
                     </div>
                 </div>
                 <section class="huella huella--ancha" aria-labelledby="t-huella">
-                    <div class="progreso" style="--valor:75" role="img" aria-label="75 % de tu meta del mes"><span>75%</span></div>
+                    <div class="progreso" style="--valor:<%= PorcentajeAporte %>" role="img" aria-label="<%= PorcentajeAporte %> % del impacto de la facultad"><span><%= PorcentajeAporte %>%</span></div>
                     <div>
-                        <h2 id="t-huella"><i class="ti ti-recycle" aria-hidden="true"></i>Tu huella circular</h2>
-                        <p>Estás en el 10 % de quienes más ayudan en tu facultad. ¡Seguí así!</p>
+                        <h2 id="t-huella"><i class="ti ti-recycle" aria-hidden="true"></i><%= EsPropio ? "Tu huella circular" : "Su huella circular" %></h2>
+                        <p><%: TextoHuella %></p>
                     </div>
                 </section>
             </div>
@@ -112,27 +107,17 @@
                 <h2 id="t-fac">Impacto por facultad</h2>
                 <p class="suave" style="font-size:14px">Residuos evitados (kg) por la comunidad</p>
                 <ul class="barras">
+                    <% foreach (dominio.ImpactoFacultad f in Facultades) { %>
                     <li>
-                        <div class="barra-fila"><span>Ingeniería (tu facultad)</span><span>142 kg</span></div>
-                        <div class="barra-pista" aria-hidden="true"><div class="barra-relleno barra-relleno--propia" style="width:100%"></div></div>
+                        <div class="barra-fila"><span><%: f.Nombre %><%= EsFacultadPropia(f) ? (EsPropio ? " (tu facultad)" : " (su facultad)") : "" %></span><span><%: Kg(f.Kg) %></span></div>
+                        <div class="barra-pista" aria-hidden="true"><div class="barra-relleno<%= EsFacultadPropia(f) ? " barra-relleno--propia" : "" %>" style="width:<%= AnchoBarra(f.Kg) %>%"></div></div>
                     </li>
-                    <li>
-                        <div class="barra-fila"><span>Ciencias Económicas</span><span>98 kg</span></div>
-                        <div class="barra-pista" aria-hidden="true"><div class="barra-relleno" style="width:69%"></div></div>
-                    </li>
-                    <li>
-                        <div class="barra-fila"><span>Ciencias de la Salud</span><span>64 kg</span></div>
-                        <div class="barra-pista" aria-hidden="true"><div class="barra-relleno" style="width:45%"></div></div>
-                    </li>
-                    <li>
-                        <div class="barra-fila"><span>Arquitectura y Diseño</span><span>48 kg</span></div>
-                        <div class="barra-pista" aria-hidden="true"><div class="barra-relleno" style="width:34%"></div></div>
-                    </li>
+                    <% } %>
                 </ul>
             </section>
         </div>
         <% } %>
 
     </div>
+    <% } %>
 </asp:Content>
-
