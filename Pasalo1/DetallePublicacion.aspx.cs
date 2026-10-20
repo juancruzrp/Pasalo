@@ -202,6 +202,9 @@ namespace Pasalo1
                 pnlEntregado.Visible =
                     PublicacionActual.Estado ==
                     EstadoPublicacion.Entregado;
+
+                ConfigurarSolicitud();
+
             }
             catch (Exception)
             {
@@ -232,5 +235,112 @@ namespace Pasalo1
 
             return ResolveUrl("~/" + valor.TrimStart('/'));
         }
+
+
+
+        private void ConfigurarSolicitud()
+        {
+            pnlPropietario.Visible = false;
+            pnlYaSolicitado.Visible = false;
+            pnlFormularioSolicitud.Visible = false;
+            pnlObjetoOfrecido.Visible = false;
+            pnlMensajeSolicitud.Visible = false;
+
+            if (PublicacionActual.Estado !=
+                EstadoPublicacion.Disponible)
+                return;
+
+            dominio.Usuario usuario =
+                Session["Usuario"] as dominio.Usuario;
+
+            if (usuario == null)
+            {
+                pnlMensajeSolicitud.Visible = true;
+                lblMensajeSolicitud.Text =
+                    "Iniciá sesión para solicitar este artículo.";
+                return;
+            }
+
+            if (usuario.IdUsuario ==
+                PublicacionActual.Dueno.IdUsuario)
+            {
+                pnlPropietario.Visible = true;
+                return;
+            }
+
+            SolicitudNegocio solicitudNegocio =
+                new SolicitudNegocio();
+
+            if (solicitudNegocio.YaSolicito(
+                PublicacionActual.Id, usuario.IdUsuario))
+            {
+                pnlYaSolicitado.Visible = true;
+                return;
+            }
+
+            pnlFormularioSolicitud.Visible = true;
+
+            bool esIntercambio =
+                PublicacionActual.Modalidad ==
+                ModalidadPublicacion.Intercambio;
+
+            pnlObjetoOfrecido.Visible = esIntercambio;
+
+            btnSolicitar.Text = esIntercambio
+                ? "Enviar propuesta de intercambio"
+                : "Solicitar este objeto";
+        }
+
+
+        protected void btnSolicitar_Click(object sender, EventArgs e)
+        {
+            dominio.Usuario usuario =
+                Session["Usuario"] as dominio.Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
+                return;
+            }
+
+            int idPublicacion;
+
+            if (!int.TryParse(
+                Request.QueryString["id"], out idPublicacion))
+            {
+                return;
+            }
+
+            try
+            {
+                SolicitudNegocio negocio =
+                    new SolicitudNegocio();
+
+                negocio.Solicitar(
+                    idPublicacion,
+                    usuario.IdUsuario,
+                    txtObjetoOfrecido.Text);
+
+                pnlFormularioSolicitud.Visible = false;
+                pnlYaSolicitado.Visible = true;
+                pnlMensajeSolicitud.Visible = false;
+            }
+            catch (NegocioException ex)
+            {
+                pnlMensajeSolicitud.Visible = true;
+                lblMensajeSolicitud.Text =
+                    HttpUtility.HtmlEncode(ex.Message);
+            }
+            catch (Exception)
+            {
+                pnlMensajeSolicitud.Visible = true;
+                lblMensajeSolicitud.Text =
+                    "No se pudo enviar la solicitud. Intentá nuevamente.";
+            }
+        }
+
+
+
     }
 }

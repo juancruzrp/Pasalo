@@ -161,37 +161,84 @@
                             <%= DescripcionSegura %>
                         </p>
 
+                        
                         <asp:Panel ID="pnlDisponible"
                             runat="server"
                             Visible="false">
 
                             <div class="solicitud">
 
-                                <% if (EsPropietario) { %>
+                                <asp:Panel ID="pnlPropietario"
+                                    runat="server"
+                                    Visible="false">
 
                                     <p class="aviso">
                                         <i class="ti ti-user"></i>
                                         Esta publicación es tuya.
                                     </p>
 
-                                <% } else { %>
+                                </asp:Panel>
 
-                                    <p class="suave">
-                                        Este artículo está disponible
-                                        para <%= ModalidadTexto.ToLowerInvariant() %>.
+                                <asp:Panel ID="pnlYaSolicitado"
+                                    runat="server"
+                                    Visible="false">
+
+                                    <p class="aviso">
+                                        <i class="ti ti-clock"></i>
+                                        Ya enviaste una solicitud para este artículo.
+                                        Está pendiente de respuesta.
                                     </p>
 
-                                    <p class="suave"
-                                       style="font-size:13px;">
-                                        Próximamente podrás enviar
-                                        solicitudes desde esta pantalla.
+                                </asp:Panel>
+
+                                <asp:Panel ID="pnlFormularioSolicitud"
+                                    runat="server"
+                                    Visible="false">
+
+                                    <asp:Panel ID="pnlObjetoOfrecido"
+                                        runat="server"
+                                        Visible="false">
+
+                                        <label class="rotulo">
+                                            ¿Qué ofrecés a cambio?
+                                        </label>
+
+                                        <asp:TextBox ID="txtObjetoOfrecido"
+                                            runat="server"
+                                            TextMode="MultiLine"
+                                            Rows="3"
+                                            MaxLength="200"
+                                            CssClass="campo"
+                                            placeholder="Describí el objeto que ofrecés" />
+
+                                    </asp:Panel>
+
+                                    <asp:Button ID="btnSolicitar"
+                                        runat="server"
+                                        Text="Solicitar este objeto"
+                                        CssClass="boton"
+                                        OnClick="btnSolicitar_Click" />
+
+                                    <p class="suave" style="font-size:13px;">
+                                        El propietario revisará tu solicitud.
+                                        Si la acepta, podrán coordinar la entrega.
                                     </p>
 
-                                <% } %>
+                                </asp:Panel>
+
+                                <asp:Panel ID="pnlMensajeSolicitud"
+                                    runat="server"
+                                    Visible="false">
+
+                                    <asp:Label ID="lblMensajeSolicitud"
+                                        runat="server" />
+
+                                </asp:Panel>
 
                             </div>
 
                         </asp:Panel>
+
 
                         <asp:Panel ID="pnlReservado"
                             runat="server"
