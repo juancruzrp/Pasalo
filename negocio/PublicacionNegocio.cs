@@ -129,6 +129,17 @@ namespace negocio
         }
 
 
+        public Publicacion ObtenerPorId(int id)
+        {
+            if (id <= 0)
+                throw new NegocioException(
+                    "El identificador de la publicación no es válido.");
+
+            return _acceso.ObtenerPorId(id);
+        }
+
+
+
 
 
 

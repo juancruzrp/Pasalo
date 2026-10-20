@@ -161,6 +161,134 @@ namespace acceso
 
 
 
+        public Publicacion ObtenerPorId(int id)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            Publicacion publicacion = null;
+
+            try
+            {
+                datos.SetearConsulta(@"
+            SELECT
+                p.IdPublicacion,
+                p.Titulo,
+                p.Descripcion,
+                p.Modalidad,
+                p.Estado,
+                p.FechaPublicacion,
+                c.IdCategoria,
+                c.Nombre AS CategoriaNombre,
+                ca.IdCarrera,
+                ca.Nombre AS CarreraNombre,
+                u.IdUsuario,
+                u.Nombre AS UsuarioNombre,
+                u.FechaRegistro AS UsuarioFechaRegistro
+            FROM Publicacion p
+            INNER JOIN Categoria c
+                ON p.IdCategoria = c.IdCategoria
+            LEFT JOIN Carrera ca
+                ON p.IdCarrera = ca.IdCarrera
+            INNER JOIN Usuario u
+                ON p.IdUsuario = u.IdUsuario
+            WHERE p.IdPublicacion = @id");
+
+                datos.SetearParametro("@id", id);
+                datos.EjecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    publicacion = new Publicacion
+                    {
+                        Id = Convert.ToInt32(
+                            datos.Lector["IdPublicacion"]),
+
+                        Titulo = datos.Lector["Titulo"].ToString(),
+
+                        Descripcion = datos.Lector["Descripcion"].ToString(),
+
+                        Modalidad = (ModalidadPublicacion)
+                            Convert.ToByte(datos.Lector["Modalidad"]),
+
+                        Estado = (EstadoPublicacion)
+                            Convert.ToByte(datos.Lector["Estado"]),
+
+                        FechaPublicacion = Convert.ToDateTime(
+                            datos.Lector["FechaPublicacion"]),
+
+                        Categoria = new Categoria
+                        {
+                            Id = Convert.ToInt32(
+                                datos.Lector["IdCategoria"]),
+                            Nombre = datos.Lector["CategoriaNombre"].ToString()
+                        },
+
+                        Dueno = new Usuario
+                        {
+                            IdUsuario = Convert.ToInt32(
+                                datos.Lector["IdUsuario"]),
+                            Nombre = datos.Lector["UsuarioNombre"].ToString(),
+                            FechaRegistro = Convert.ToDateTime(
+                                datos.Lector["UsuarioFechaRegistro"])
+                        }
+                    };
+
+                    if (datos.Lector["IdCarrera"] != DBNull.Value)
+                    {
+                        publicacion.Carrera = new Carrera
+                        {
+                            Id = Convert.ToInt32(
+                                datos.Lector["IdCarrera"]),
+                            Nombre = datos.Lector["CarreraNombre"].ToString()
+                        };
+                    }
+                }
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+
+            if (publicacion == null)
+                return null;
+
+            AccesoDatos datosFotos = new AccesoDatos();
+
+            try
+            {
+                datosFotos.SetearConsulta(@"
+            SELECT IdFoto, Ruta, Orden
+            FROM FotoPublicacion
+            WHERE IdPublicacion = @id
+            ORDER BY Orden, IdFoto");
+
+                datosFotos.SetearParametro("@id", id);
+                datosFotos.EjecutarLectura();
+
+                while (datosFotos.Lector.Read())
+                {
+                    publicacion.Fotos.Add(new FotoPublicacion
+                    {
+                        Id = Convert.ToInt32(
+                            datosFotos.Lector["IdFoto"]),
+
+                        Ruta = datosFotos.Lector["Ruta"].ToString(),
+
+                        Orden = Convert.ToInt32(
+                            datosFotos.Lector["Orden"])
+                    });
+                }
+            }
+            finally
+            {
+                datosFotos.CerrarConexion();
+            }
+
+            return publicacion;
+        }
+
+
+
+
 
 
 
