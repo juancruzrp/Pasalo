@@ -11,7 +11,7 @@ namespace Pasalo1
     {
         private static readonly CultureInfo Es = new CultureInfo("es-AR");
 
-        /
+        
         protected ImpactoComunidad Comunidad;
 
         protected bool Logueado

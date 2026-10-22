@@ -84,5 +84,66 @@ namespace negocio
             return acceso.YaSolicito(
                 idPublicacion, idSolicitante);
         }
+
+
+
+        public List<SolicitudListado> ListarRecibidas(int idUsuario)
+        {
+            if (idUsuario <= 0)
+                throw new NegocioException(
+                    "El usuario no es válido.");
+
+            return acceso.ListarRecibidas(idUsuario);
+        }
+
+        public List<SolicitudListado> ListarEnviadas(int idUsuario)
+        {
+            if (idUsuario <= 0)
+                throw new NegocioException(
+                    "El usuario no es válido.");
+
+            return acceso.ListarEnviadas(idUsuario);
+        }
+
+
+
+        public void Aceptar(int idSolicitud, int idDueno)
+        {
+            Resolver(idSolicitud, idDueno, true);
+        }
+
+        public void Rechazar(int idSolicitud, int idDueno)
+        {
+            Resolver(idSolicitud, idDueno, false);
+        }
+
+        private void Resolver(int idSolicitud, int idDueno, bool aceptar)
+        {
+            if (idSolicitud <= 0 || idDueno <= 0)
+                throw new NegocioException(
+                    "Los datos de la solicitud no son válidos.");
+
+            try
+            {
+                acceso.Resolver(idSolicitud, idDueno, aceptar);
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Number >= 50101 && ex.Number <= 50104)
+                    throw new NegocioException(ex.Message);
+
+                throw;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
     }
 }

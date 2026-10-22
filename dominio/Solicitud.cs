@@ -23,4 +23,53 @@ namespace dominio
         public EstadoSolicitud Estado { get; set; }
         public DateTime FechaSolicitud { get; set; }
     }
+
+
+    public class SolicitudListado
+    {
+        public int IdSolicitud { get; set; }
+        public int IdPublicacion { get; set; }
+
+        public string TituloPublicacion { get; set; }
+        public string Modalidad { get; set; }
+        public string ObjetoOfrecido { get; set; }
+
+        public string NombreUsuario { get; set; }
+
+        public EstadoSolicitud Estado { get; set; }
+        public DateTime FechaSolicitud { get; set; }
+
+        public string EstadoTexto
+        {
+            get
+            {
+                switch (Estado)
+                {
+                    case EstadoSolicitud.Aceptada:
+                        return "Aceptada";
+
+                    case EstadoSolicitud.Rechazada:
+                        return "Rechazada";
+
+                    default:
+                        return "Pendiente";
+                }
+            }
+        }
+
+        public string FechaTexto
+        {
+            get
+            {
+                DateTime fecha = DateTime.SpecifyKind(
+                    FechaSolicitud, DateTimeKind.Utc);
+
+                return fecha.ToLocalTime()
+                    .ToString("dd/MM/yyyy HH:mm");
+            }
+        }
+    }
+
+
+
 }

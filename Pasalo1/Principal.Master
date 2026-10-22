@@ -31,7 +31,7 @@
 
             <nav class="menu" aria-label="Principal">
                 <a href="Default.aspx"<%= Request.Path.IndexOf("Perfil", StringComparison.OrdinalIgnoreCase) < 0 ? " aria-current=\"page\"" : "" %>>Catálogo</a>
-                <a href="#">Mi actividad</a>
+                <a href="MiActividad.aspx">Mi actividad</a>
                 <a href="#">Chat</a>
                 <button type="button" class="icono-btn" aria-label="Notificaciones"><i class="ti ti-bell" aria-hidden="true"></i></button>
               <a class="usuario" href="Perfil.aspx"<%= Request.Path.IndexOf("Perfil", StringComparison.OrdinalIgnoreCase) >= 0 ? " aria-current=\"page\"" : "" %>><span class="avatar" aria-hidden="true"><%: InicialUsuario %></span>Hola, <%: PrimerNombre %></a>
