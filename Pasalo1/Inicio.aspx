@@ -18,13 +18,13 @@
             color: var(--texto);
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
-       
+        
         .inicio :where(h1, h2, h3, p) { margin: 0; }
         .inicio h1, .inicio h2, .inicio h3 { color: var(--verde-osc); }
         .inicio section { scroll-margin-top: 24px; }
         .i-contenedor { max-width: 1150px; margin: 0 auto; padding: 0 24px; }
 
-        /* Textos a completar */
+        
         .completar {
             padding: 1px 7px; border: 1px dashed #b38b00; border-radius: 6px;
             background: #fff3b0; color: #5c4700; font-weight: 500;
@@ -52,7 +52,7 @@
         .i-subtitulo { max-width: 650px; margin: 0 auto 52px; text-align: center; font-size: 16px; line-height: 1.7; }
         .i-bloque { padding: 84px 0; }
 
-        /* ===== Portada ===== */
+        
         .hero { padding: 70px 0 60px; }
         .hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 48px; align-items: center; }
         .hero h1 { font-size: clamp(32px, 4.5vw, 52px); line-height: 1.15; font-weight: 700; }
@@ -79,7 +79,7 @@
         .mini-meta { font-size: 12px; }
         .vista-pie { margin-top: 12px; font-size: 12px; text-align: center; }
 
-        /* Estados: color + forma + texto */
+        
         .i-estado { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 2px 9px; border-radius: 7px; font-size: 12px; font-weight: 600; }
         .i-estado::before { content: ""; width: 8px; height: 8px; background: currentColor; }
         .i-disp { background: #ddf0e3; color: #1e5b34; }
@@ -87,14 +87,13 @@
         .i-res { background: #fbe9c8; color: #7a4a00; }
         .i-res::before { transform: rotate(45deg); }
 
-        /* ===== Qué se puede compartir ===== */
+      
         .cats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
         .cat { padding: 24px 16px; border: 1px solid var(--borde); border-radius: 16px; background: #fff; text-align: center; }
         .cat i { display: grid; place-items: center; width: 52px; height: 52px; margin: 0 auto 14px; border-radius: 14px; background: var(--verde-claro); color: var(--verde); font-size: 26px; }
         .cat h3 { margin-bottom: 6px; font-size: 16px; }
         .cat p { font-size: 13px; line-height: 1.6; }
 
-        /* ===== Como funciona ===== */
         .pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         .paso { padding: 26px 20px; border: 1px solid var(--borde); border-radius: 18px; background: #fff; }
         .paso-numero {
@@ -109,25 +108,44 @@
         .dos h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 17px; }
         .dos p { font-size: 14px; line-height: 1.7; color: #45595b; }
 
-        
+       
         .porque { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .porque > div { display: flex; gap: 16px; padding: 24px; border: 1px solid var(--borde); border-radius: 18px; background: #fff; }
         .porque i { flex: none; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: var(--verde-claro); color: var(--verde); font-size: 24px; }
         .porque h3 { margin-bottom: 6px; font-size: 17px; }
         .porque p { font-size: 14px; line-height: 1.7; }
 
-        /* ===== Impacto ===== */
-        .impacto { background: var(--verde); color: #d8e9e7; }
-        .impacto .i-titulo { color: #fff; }
-        .impacto .i-subtitulo { color: #d8e9e7; }
+        .seccion-impacto { background: var(--verde); color: #f1f8f7; }
+        .seccion-impacto .i-titulo { color: #fff; }
+        .seccion-impacto .i-subtitulo { color: #f1f8f7; }
+
+        .tres-r { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin: 0 0 44px; padding: 0; list-style: none; }
+        .tres-r li {
+            display: grid; justify-items: center; gap: 2px; min-width: 170px; padding: 14px 22px;
+            border: 1px solid rgba(255, 255, 255, .35); border-radius: 14px;
+            font-size: 18px; font-weight: 700; color: #fff; text-align: center;
+        }
+        .tres-r li small { font-size: 12px; font-weight: 700; }
+        .tres-r .tres-r-activa { background: #fff; border-color: #fff; color: var(--verde); }
+
+      
+        .imp-minis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 52px; }
+        .imp-mini { padding: 24px; border-radius: 16px; background: rgba(255, 255, 255, .12); }
+        .imp-mini i {
+            display: grid; place-items: center; width: 46px; height: 46px; margin-bottom: 14px; border-radius: 12px;
+            background: rgba(255, 255, 255, .18); color: #fff; font-size: 24px;
+        }
+        .imp-mini h3 { margin-bottom: 8px; font-size: 17px; color: #fff; }
+        .imp-mini p { font-size: 14px; line-height: 1.7; }
+        @media (max-width: 900px) { .imp-minis { grid-template-columns: 1fr; } }
         .contadores { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
         .contadores > div { min-width: 200px; padding: 22px 26px; border-radius: 16px; background: rgba(255, 255, 255, .12); text-align: center; }
         .contadores strong { display: block; font-size: 34px; line-height: 1.2; color: #fff; }
         .contadores span { font-size: 14px; }
         .impacto-vacio { max-width: 560px; margin: 0 auto; padding: 18px 22px; border-radius: 14px; background: rgba(255, 255, 255, .12); text-align: center; font-size: 15px; }
-        .impacto-nota { max-width: 650px; margin: 26px auto 0; font-size: 13px; text-align: center; color: #bcd6d3; }
+        .impacto-nota { max-width: 650px; margin: 26px auto 0; font-size: 13px; text-align: center; color: #d8e9e7; }
 
-        /* ===== Preguntas frecuentes ===== */
+
         .faq { max-width: 800px; margin: 0 auto; display: grid; gap: 12px; }
         .faq details { border: 1px solid var(--borde); border-radius: 14px; background: #fff; }
         .faq summary {
@@ -139,7 +157,7 @@
         .faq details[open] summary::after { content: "−"; }
         .faq details p { padding: 0 20px 18px; font-size: 14px; line-height: 1.8; }
 
-        /* ===== Nosotros, cierre y pie ===== */
+       
         .nosotros { background: #e8f1ed; }
         .nosotros-contenido { max-width: 850px; margin: 0 auto; padding: 70px 24px; text-align: center; }
         .nosotros h2 { margin-bottom: 20px; font-size: 30px; }
@@ -159,7 +177,7 @@
         .pie a:hover { text-decoration: underline; }
         .pie-copia { margin-top: 28px; font-size: 13px; text-align: center; color: #84918e; }
 
-        /* ===== Pantallas chicas ===== */
+    
         @media (max-width: 900px) {
             .hero-grid { grid-template-columns: 1fr; }
             .cats { grid-template-columns: repeat(3, 1fr); }
@@ -174,12 +192,11 @@
             .cta { margin: 40px 20px; }
         }
 
-        /* ===== Barra superior */
+       
         .barra { transition: transform .3s ease; }
         .barra--oculta { transform: translateY(-100%); }
         @media (prefers-reduced-motion: reduce) { .barra { transition: none; } }
 
-        /* ===== Animaciones: solo con JavaScript */
         .js-anim .reveal {
             opacity: 0; transform: translateY(26px);
             transition: opacity .7s ease, transform .7s ease; transition-delay: var(--retraso, 0s);
@@ -201,7 +218,7 @@
         (function () {
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
             document.documentElement.classList.add('js-anim');
-            // Seguro: si por algún motivo el script principal no arranca, se muestra todo igual
+            
             setTimeout(function () {
                 if (!window.inicioListo) document.documentElement.classList.remove('js-anim');
             }, 3000);
@@ -215,7 +232,7 @@
 
     <div class="inicio">
 
-        <%-- 1. PORTADA --%>
+        
         <section class="hero" aria-labelledby="t-hero">
             <div class="i-contenedor hero-grid">
 
@@ -248,7 +265,6 @@
                     <a href="#como-funciona" class="hero-mas">¿Cómo funciona? <i class="ti ti-arrow-down" aria-hidden="true"></i></a>
                 </div>
 
-                <%-- Vista de ejemplo: es ilustrativa, por eso se oculta a los lectores de pantalla --%>
                 <div class="vista" aria-hidden="true">
                     <div class="vista-cabecera"><span>Objetos disponibles</span><i class="ti ti-search"></i></div>
                     <div class="vista-lista">
@@ -284,7 +300,7 @@
         </section>
 
 
-        <%-- 2. Q SE PUEDE COMPARTIR --%>
+       
         <section class="i-bloque" aria-labelledby="t-compartir">
             <div class="i-contenedor">
                 <h2 class="i-titulo" id="t-compartir">¿Qué podés compartir?</h2>
@@ -301,7 +317,7 @@
         </section>
 
 
-        <%-- 3.  FUNCIONA --%>
+       
         <section class="i-bloque" id="como-funciona" aria-labelledby="t-como">
             <div class="i-contenedor">
                 <h2 class="i-titulo" id="t-como">¿Cómo funciona PÁSALO?</h2>
@@ -344,7 +360,7 @@
         </section>
 
 
-        <%-- 4. POR q --%>
+        
         <section class="i-bloque" aria-labelledby="t-porque">
             <div class="i-contenedor">
                 <h2 class="i-titulo" id="t-porque">¿Por qué PÁSALO?</h2>
@@ -385,11 +401,35 @@
         </section>
 
 
-        <%-- 5. IMPaCTO AMBIENTAL  --%>
-        <section class="i-bloque impacto" aria-labelledby="t-impacto">
+        <%-- 5. IMPACTO AMBIENTAL (los números salen de la base; si todavía no hay entregas, no se muestran) --%>
+        <section class="i-bloque seccion-impacto" aria-labelledby="t-impacto">
             <div class="i-contenedor">
                 <h2 class="i-titulo" id="t-impacto">El impacto de compartir</h2>
                 <p class="i-subtitulo">Cada objeto que vuelve a usarse es un objeto menos en la basura.</p>
+
+                <ul class="tres-r" aria-label="Las tres R del consumo responsable: reducir, reutilizar y reciclar">
+                    <li>Reducir</li>
+                    <li class="tres-r-activa">Reutilizar<small>Acá está PÁSALO</small></li>
+                    <li>Reciclar</li>
+                </ul>
+
+                <div class="imp-minis">
+                    <div class="imp-mini">
+                        <i class="ti ti-recycle" aria-hidden="true"></i>
+                        <h3>Reutilizar vale más que reciclar</h3>
+                        <p>Reciclar también gasta energía. Si un objeto entero todavía sirve, darle otra vida evita ese paso.</p>
+                    </div>
+                    <div class="imp-mini">
+                        <i class="ti ti-droplet" aria-hidden="true"></i>
+                        <h3>Fabricar algo nuevo cuesta recursos</h3>
+                        <p>Cada objeto nuevo necesita materia prima, energía y agua. Usar uno que ya existe evita todo eso.</p>
+                    </div>
+                    <div class="imp-mini">
+                        <i class="ti ti-trash" aria-hidden="true"></i>
+                        <h3>Un residuo menos, entre todos</h3>
+                        <p>Lo que se reutiliza no termina en la basura. Entre muchos estudiantes, esos objetos se suman.</p>
+                    </div>
+                </div>
 
                 <% if (Comunidad != null) { %>
                 <div class="contadores">
@@ -476,7 +516,7 @@
         </section>
 
 
-        <%-- PIE DE PaGINA --%>
+        <%-- PIE DE PÁGINA --%>
         <footer class="pie">
             <div class="i-contenedor">
                 <div class="pie-grid">
@@ -508,92 +548,91 @@
     </div>
 
     <script>
-    (function () {
-        var animar = document.documentElement.classList.contains('js-anim');
+        (function () {
+            var animar = document.documentElement.classList.contains('js-anim');
 
-        // ----- Barra superior: se esconde al bajar y vuelve al subir -----
-        var barra = document.querySelector('.barra');
-        if (barra) {
-            var ultimo = window.pageYOffset;
-            var pendiente = false;
-            var revisar = function () {
-                var actual = window.pageYOffset;
-                var delta = actual - ultimo;
-                if (actual < 10) { barra.classList.remove('barra--oculta'); ultimo = actual; }
-                else if (delta > 6 && actual > 120) { barra.classList.add('barra--oculta'); ultimo = actual; }
-                else if (delta < -6) { barra.classList.remove('barra--oculta'); ultimo = actual; }
-                pendiente = false;
-            };
-            window.addEventListener('scroll', function () {
-                if (!pendiente) { pendiente = true; requestAnimationFrame(revisar); }
-            }, { passive: true });
-            // Si alguien llega a la barra con el teclado, tiene que verse
-            barra.addEventListener('focusin', function () { barra.classList.remove('barra--oculta'); });
-        }
-
-        if (!animar) { window.inicioListo = true; return; }
-
-        // ----- Contador que sube hasta el nro real -----
-        function contar(el) {
-            var original = el.textContent;
-            var m = original.match(/^([\d.,]+)(.*)$/);
-            if (!m) return;
-            var decimales = m[1].indexOf(',') >= 0 ? m[1].split(',')[1].length : 0;
-            var meta = parseFloat(m[1].replace(',', '.'));
-            if (isNaN(meta)) return;
-            var inicio = null;
-            function paso(t) {
-                if (inicio === null) inicio = t;
-                var p = Math.min((t - inicio) / 1200, 1);
-                var f = 1 - Math.pow(1 - p, 3);
-                el.textContent = (meta * f).toFixed(decimales).replace('.', ',') + m[2];
-                if (p < 1) requestAnimationFrame(paso); else el.textContent = original;
+            var barra = document.querySelector('.barra');
+            if (barra) {
+                var ultimo = window.pageYOffset;
+                var pendiente = false;
+                var revisar = function () {
+                    var actual = window.pageYOffset;
+                    var delta = actual - ultimo;
+                    if (actual < 10) { barra.classList.remove('barra--oculta'); ultimo = actual; }
+                    else if (delta > 6 && actual > 120) { barra.classList.add('barra--oculta'); ultimo = actual; }
+                    else if (delta < -6) { barra.classList.remove('barra--oculta'); ultimo = actual; }
+                    pendiente = false;
+                };
+                window.addEventListener('scroll', function () {
+                    if (!pendiente) { pendiente = true; requestAnimationFrame(revisar); }
+                }, { passive: true });
+            
+                barra.addEventListener('focusin', function () { barra.classList.remove('barra--oculta'); });
             }
-            requestAnimationFrame(paso);
-        }
 
-        var objetivos = document.querySelectorAll(
-            '.hero .i-etiqueta, .hero h1, .hero-descripcion, .botones, .hero-nota, .hero-mas, .vista, .mini, ' +
-            '.i-titulo, .i-subtitulo, .cat, .paso, .dos > div, .porque > div, .contadores > div, ' +
-            '.impacto-vacio, .impacto-nota, .faq details, .nosotros-contenido, .cta');
+            if (!animar) { window.inicioListo = true; return; }
 
-        objetivos.forEach(function (el) {
-            var pos = Array.prototype.indexOf.call(el.parentNode.children, el);
-            el.style.setProperty('--retraso', (Math.min(pos, 5) * 0.09) + 's');
-            el.classList.add('reveal');
-        });
-
-        if (!('IntersectionObserver' in window)) {
-            objetivos.forEach(function (el) { el.classList.add('visible'); });
-            window.inicioListo = true;
-            return;
-        }
-
-        var observador = new IntersectionObserver(function (entradas) {
-            entradas.forEach(function (en) {
-                if (!en.isIntersecting) return;
-                var el = en.target;
-                el.classList.add('visible');
-                observador.unobserve(el);
-
-                
-                el.addEventListener('transitionend', function limpiar(ev) {
-                    if (ev.propertyName !== 'transform') return;
-                    el.classList.remove('reveal', 'visible');
-                    el.style.removeProperty('--retraso');
-                    el.removeEventListener('transitionend', limpiar);
-                });
-
-                if (el.parentNode.classList.contains('contadores')) {
-                    var numero = el.querySelector('strong');
-                    if (numero) contar(numero);
+            
+            function contar(el) {
+                var original = el.textContent;
+                var m = original.match(/^([\d.,]+)(.*)$/);
+                if (!m) return;
+                var decimales = m[1].indexOf(',') >= 0 ? m[1].split(',')[1].length : 0;
+                var meta = parseFloat(m[1].replace(',', '.'));
+                if (isNaN(meta)) return;
+                var inicio = null;
+                function paso(t) {
+                    if (inicio === null) inicio = t;
+                    var p = Math.min((t - inicio) / 1200, 1);
+                    var f = 1 - Math.pow(1 - p, 3);
+                    el.textContent = (meta * f).toFixed(decimales).replace('.', ',') + m[2];
+                    if (p < 1) requestAnimationFrame(paso); else el.textContent = original;
                 }
-            });
-        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+                requestAnimationFrame(paso);
+            }
 
-        objetivos.forEach(function (el) { observador.observe(el); });
-        window.inicioListo = true;
-    })();
+            
+            var objetivos = document.querySelectorAll(
+                '.hero .i-etiqueta, .hero h1, .hero-descripcion, .botones, .hero-nota, .hero-mas, .vista, .mini, ' +
+                '.i-titulo, .i-subtitulo, .cat, .paso, .dos > div, .porque > div, .contadores > div, ' +
+                '.tres-r > li, .imp-mini, .impacto-vacio, .impacto-nota, .faq details, .nosotros-contenido, .cta');
+
+            objetivos.forEach(function (el) {
+                var pos = Array.prototype.indexOf.call(el.parentNode.children, el);
+                el.style.setProperty('--retraso', (Math.min(pos, 5) * 0.09) + 's');
+                el.classList.add('reveal');
+            });
+
+            if (!('IntersectionObserver' in window)) {
+                objetivos.forEach(function (el) { el.classList.add('visible'); });
+                window.inicioListo = true;
+                return;
+            }
+
+            var observador = new IntersectionObserver(function (entradas) {
+                entradas.forEach(function (en) {
+                    if (!en.isIntersecting) return;
+                    var el = en.target;
+                    el.classList.add('visible');
+                    observador.unobserve(el);
+
+                    el.addEventListener('transitionend', function limpiar(ev) {
+                        if (ev.propertyName !== 'transform') return;
+                        el.classList.remove('reveal', 'visible');
+                        el.style.removeProperty('--retraso');
+                        el.removeEventListener('transitionend', limpiar);
+                    });
+
+                    if (el.parentNode.classList.contains('contadores')) {
+                        var numero = el.querySelector('strong');
+                        if (numero) contar(numero);
+                    }
+                });
+            }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+            objetivos.forEach(function (el) { observador.observe(el); });
+            window.inicioListo = true;
+        })();
     </script>
 
 </asp:Content>
