@@ -67,7 +67,39 @@ namespace dominio
                 return fecha.ToLocalTime()
                     .ToString("dd/MM/yyyy HH:mm");
             }
+      }
+
+
+
+        public int? MotivoRespuesta { get; set; }
+
+        // Lo que ve quien hizo el pedido (pestaña Enviadas)
+        public string MensajeSolicitante
+        {
+            get
+            {
+                if (Estado != EstadoSolicitud.Rechazada) return null;
+
+                return MotivoRespuesta == 2
+                    ? "El dueño eligió a otra persona para este artículo."
+                    : "El dueño rechazó tu solicitud.";
+            }
         }
+
+        // Lo que ve el dueño (pestaña Recibidas)
+        public string MensajeDueno
+        {
+            get
+            {
+                if (Estado != EstadoSolicitud.Rechazada) return null;
+
+                return MotivoRespuesta == 2
+                    ? "Se rechazó automáticamente al aceptar a otra persona."
+                    : "Rechazaste esta solicitud.";
+            }
+        }
+
+
     }
 
 

@@ -163,6 +163,7 @@ namespace acceso
                 s.ObjetoOfrecido,
                 s.Estado,
                 s.FechaSolicitud,
+                s.MotivoRespuesta,  
                 u.Nombre AS NombreUsuario
             FROM Solicitud s
             INNER JOIN Publicacion p
@@ -208,6 +209,7 @@ namespace acceso
                 s.ObjetoOfrecido,
                 s.Estado,
                 s.FechaSolicitud,
+                s.MotivoRespuesta,  
                 u.Nombre AS NombreUsuario
             FROM Solicitud s
             INNER JOIN Publicacion p
@@ -267,6 +269,12 @@ namespace acceso
             solicitud.FechaSolicitud =
                 Convert.ToDateTime(lector["FechaSolicitud"]);
 
+            solicitud.MotivoRespuesta =
+                lector["MotivoRespuesta"] == DBNull.Value
+                ? (int?)null
+                : Convert.ToInt32(lector["MotivoRespuesta"]);
+
+
             return solicitud;
         }
 
@@ -324,28 +332,35 @@ namespace acceso
                         THROW 50104,
                             'La solicitud ya fue respondida.', 1;
 
-                    IF @aceptar = 1
-                    BEGIN
-                        UPDATE Solicitud
-                        SET Estado = 1
-                        WHERE IdSolicitud = @idSolicitud;
+               IF @aceptar = 1
+        BEGIN
+            UPDATE Solicitud
+            SET Estado = 1,
+                FechaRespuesta = SYSUTCDATETIME()
+            WHERE IdSolicitud = @idSolicitud;
 
-                        UPDATE Solicitud
-                        SET Estado = 2
-                        WHERE IdPublicacion = @idPublicacion
-                          AND IdSolicitud <> @idSolicitud
-                          AND Estado = 0;
+            -- Las demás pendientes se rechazan solas (motivo 2: se eligió a otra persona)
+            UPDATE Solicitud
+            SET Estado = 2,
+                MotivoRespuesta = 2,
+                FechaRespuesta = SYSUTCDATETIME()
+            WHERE IdPublicacion = @idPublicacion
+              AND IdSolicitud <> @idSolicitud
+              AND Estado = 0;
 
-                        UPDATE Publicacion
-                        SET Estado = 1
-                        WHERE IdPublicacion = @idPublicacion;
-                    END
-                    ELSE
-                    BEGIN
-                        UPDATE Solicitud
-                        SET Estado = 2
-                        WHERE IdSolicitud = @idSolicitud;
-                    END";
+            UPDATE Publicacion
+            SET Estado = 1
+            WHERE IdPublicacion = @idPublicacion;
+        END
+        ELSE
+        BEGIN
+            -- Motivo 1: el dueño la rechazó
+            UPDATE Solicitud
+            SET Estado = 2,
+                MotivoRespuesta = 1,
+                FechaRespuesta = SYSUTCDATETIME()
+            WHERE IdSolicitud = @idSolicitud;
+        END";
 
                         using (SqlCommand comando = new SqlCommand(
                             sql, conexion, transaccion))

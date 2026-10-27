@@ -171,6 +171,18 @@
             border-radius: 10px;
             margin-bottom: 20px;
         }
+        .actividad-aviso {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: #f5f7f7;
+            color: #5b6f72;
+            font-size: 14px;
+            line-height: 1.5;
+        }
 
         @media (max-width: 600px) {
             .actividad-tabs {
@@ -292,6 +304,13 @@
                                     <%#: Eval("ObjetoOfrecido") %>
                                 </p>
 
+                                 <asp:Panel runat="server"
+                                Visible='<%# Eval("MensajeDueno") != null %>'
+                                CssClass="actividad-aviso">
+                                <i class="ti ti-info-circle" aria-hidden="true"></i>
+                                <span><%#: Eval("MensajeDueno") %></span>
+                            </asp:Panel>
+
                             </asp:Panel>
 
                             <!-- Botones solamente para solicitudes pendientes -->
@@ -398,6 +417,13 @@
                                     <%#: Eval("ObjetoOfrecido") %>
                                 </p>
 
+                            </asp:Panel>
+
+                             <asp:Panel runat="server"
+                                Visible='<%# Eval("MensajeSolicitante") != null %>'
+                                CssClass="actividad-aviso">
+                                <i class="ti ti-info-circle" aria-hidden="true"></i>
+                                <span><%#: Eval("MensajeSolicitante") %></span>
                             </asp:Panel>
 
                         </article>
