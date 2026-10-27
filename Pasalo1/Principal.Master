@@ -11,6 +11,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet" />
      <link href="~/Content/pasalo.css?v=7" rel="stylesheet" runat="server" />
+    <style>
+        /* Campanita de notificaciones (se llena con Notificaciones.ashx) */
+        .campana { position: relative; }
+        .campana > summary { list-style: none; cursor: pointer; position: relative; }
+        .campana > summary::-webkit-details-marker { display: none; }
+        .punto { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box;
+                 border-radius: 9px; background: #d9534f; color: #fff; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center; }
+        .punto[hidden] { display: none; }
+        .punto--texto { position: static; display: inline-block; margin-left: 6px; vertical-align: middle; }
+        .campana-panel { position: absolute; right: 0; top: calc(100% + 10px); width: 330px; max-width: 86vw; z-index: 60;
+                         background: #fff; border: 1px solid #e3e8e5; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.12); overflow: hidden; }
+        .campana-vacia { margin: 0; padding: 18px 16px; color: #718183; font-size: 14px; }
+        .campana-item { display: flex; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #eef2f0; text-decoration: none; color: #244f53; font-size: 14px; line-height: 1.4; }
+        .campana-item:last-child { border-bottom: 0; }
+        .campana-item:hover { background: #f5f7f7; }
+        .campana-item i { font-size: 20px; color: #28666d; flex: 0 0 auto; }
+        .campana-item small { display: block; color: #718183; font-size: 12px; margin-top: 2px; }
+    </style>
     <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
 </head>
 <body>
@@ -32,8 +50,11 @@
             <nav class="menu" aria-label="Principal">
                 <a href="Default.aspx"<%= Request.Path.IndexOf("Perfil", StringComparison.OrdinalIgnoreCase) < 0 ? " aria-current=\"page\"" : "" %>>Catálogo</a>
                 <a href="MiActividad.aspx">Mi actividad</a>
-                <a href="#">Chat</a>
-                <button type="button" class="icono-btn" aria-label="Notificaciones"><i class="ti ti-bell" aria-hidden="true"></i></button>
+                <a href="Chat.aspx"<%= Request.Path.IndexOf("Chat", StringComparison.OrdinalIgnoreCase) >= 0 ? " aria-current=\"page\"" : "" %>>Chat<span class="punto punto--texto" id="chat-n" hidden></span></a>
+                <details class="campana" id="campana">
+                    <summary class="icono-btn" aria-label="Notificaciones"><i class="ti ti-bell" aria-hidden="true"></i><span class="punto" id="campana-n" hidden></span></summary>
+                    <div class="campana-panel" id="campana-lista"><p class="campana-vacia">No tenés notificaciones nuevas.</p></div>
+                </details>
               <a class="usuario" href="Perfil.aspx"<%= Request.Path.IndexOf("Perfil", StringComparison.OrdinalIgnoreCase) >= 0 ? " aria-current=\"page\"" : "" %>><span class="avatar" aria-hidden="true"><%: InicialUsuario %></span>Hola, <%: PrimerNombre %></a>
 <a href="Login.aspx?salir=1">Salir</a>
             </nav>
@@ -42,6 +63,52 @@
         <main id="contenido">
             <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
         </main>
+
+        <script>
+            // Consulta Notificaciones.ashx al cargar y cada 30 s; muestra el globito rojo (sutil) y llena el desplegable.
+            (function () {
+                var base = document.title, det = document.getElementById('campana'), punto = document.getElementById('campana-n'),
+                    lista = document.getElementById('campana-lista'), chat = document.getElementById('chat-n');
+
+                function hace(iso) {
+                    var min = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+                    if (min < 1) return 'ahora';
+                    if (min < 60) return 'hace ' + min + ' min';
+                    if (min < 1440) return 'hace ' + Math.round(min / 60) + ' h';
+                    return 'hace ' + Math.round(min / 1440) + ' d';
+                }
+
+                function pintar(d) {
+                    var total = d.total || 0, msgs = d.mensajes || 0;
+                    punto.hidden = total === 0; punto.textContent = total > 9 ? '9+' : total;
+                    chat.hidden = msgs === 0;   chat.textContent = msgs > 9 ? '9+' : msgs;
+                    document.title = (total ? '(' + total + ') ' : '') + base;
+
+                    lista.textContent = '';
+                    if (!d.items || d.items.length === 0) {
+                        var p = document.createElement('p'); p.className = 'campana-vacia';
+                        p.textContent = 'No tenés notificaciones nuevas.'; lista.appendChild(p); return;
+                    }
+                    d.items.forEach(function (n) {
+                        var a = document.createElement('a'); a.className = 'campana-item'; a.href = n.url;
+                        var i = document.createElement('i');
+                        i.className = 'ti ' + (n.tipo === 'aceptada' ? 'ti-circle-check' : n.tipo === 'rechazada' ? 'ti-circle-x' : 'ti-message-circle');
+                        var t = document.createElement('span'); t.textContent = n.texto;       // textContent: nunca interpreta HTML
+                        var f = document.createElement('small'); f.textContent = hace(n.fecha); t.appendChild(f);
+                        a.appendChild(i); a.appendChild(t); lista.appendChild(a);
+                    });
+                }
+
+                function pedir() {
+                    fetch('Notificaciones.ashx', { credentials: 'same-origin', cache: 'no-store' })
+                        .then(function (r) { return r.json(); }).then(pintar).catch(function () { });
+                }
+                pedir(); setInterval(pedir, 30000);
+
+                // Se cierra al tocar afuera
+                document.addEventListener('click', function (e) { if (det.open && !det.contains(e.target)) det.open = false; });
+            })();
+        </script>
     </form>
 </body>
 </html>

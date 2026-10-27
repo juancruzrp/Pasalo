@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ImpactoNegocio.cs" />
+    <Compile Include="MensajeNegocio.cs" />
+    <Compile Include="NotificacionNegocio.cs" />
     <Compile Include="PublicacionNegocio.cs" />
     <Compile Include="NegocioException.cs" />
     <Compile Include="PasswordHelper.cs" />

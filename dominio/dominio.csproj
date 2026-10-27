@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Catalogo.cs" />
     <Compile Include="ImpactoComunidad.cs" />
+    <Compile Include="MensajeChat.cs" />
     <Compile Include="Solicitud.cs" />
     <Compile Include="PerfilUsuario.cs" />
     <Compile Include="Publicacion.cs" />

@@ -337,6 +337,16 @@
 
                             </asp:Panel>
 
+                            <asp:Panel runat="server"
+                                Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
+                                CssClass="actividad-acciones">
+                                <a class="actividad-btn-aceptar"
+                                    style="text-decoration:none;display:inline-block;"
+                                    href='Chat.aspx?id=<%# Eval("IdSolicitud") %>'>
+                                    <i class="ti ti-messages" aria-hidden="true"></i> Abrir chat
+                                </a>
+                            </asp:Panel>
+
                         </article>
 
                     </ItemTemplate>
@@ -424,6 +434,16 @@
                                 CssClass="actividad-aviso">
                                 <i class="ti ti-info-circle" aria-hidden="true"></i>
                                 <span><%#: Eval("MensajeSolicitante") %></span>
+                            </asp:Panel>
+
+                            <asp:Panel runat="server"
+                                Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
+                                CssClass="actividad-acciones">
+                                <a class="actividad-btn-aceptar"
+                                    style="text-decoration:none;display:inline-block;"
+                                    href='Chat.aspx?id=<%# Eval("IdSolicitud") %>'>
+                                    <i class="ti ti-messages" aria-hidden="true"></i> Abrir chat
+                                </a>
                             </asp:Panel>
 
                         </article>

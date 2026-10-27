@@ -98,9 +98,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DetallePublicacion.aspx" />
+    <Content Include="Error.aspx" />
     <Content Include="Inicio.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="MiActividad.aspx" />
+    <Content Include="Chat.aspx" />
+    <Content Include="Notificaciones.ashx" />
     <Content Include="Perfil.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -188,6 +191,13 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Chat.aspx.cs">
+      <DependentUpon>Chat.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Chat.aspx.designer.cs">
+      <DependentUpon>Chat.aspx</DependentUpon>
+    </Compile>
     <Compile Include="DetallePublicacion.aspx.cs">
       <DependentUpon>DetallePublicacion.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -202,6 +212,13 @@
     <Compile Include="Inicio.aspx.designer.cs">
       <DependentUpon>Inicio.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Error.aspx.cs">
+      <DependentUpon>Error.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Error.aspx.designer.cs">
+      <DependentUpon>Error.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Login.aspx.cs">
       <DependentUpon>Login.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -215,6 +232,9 @@
     </Compile>
     <Compile Include="MiActividad.aspx.designer.cs">
       <DependentUpon>MiActividad.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Notificaciones.ashx.cs">
+      <DependentUpon>Notificaciones.ashx</DependentUpon>
     </Compile>
     <Compile Include="Perfil.aspx.cs">
       <DependentUpon>Perfil.aspx</DependentUpon>
