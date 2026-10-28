@@ -15,6 +15,7 @@ namespace dominio
         public int? IdCarrera { get; set; }
         public int Rol { get; set; }
         public bool Activo { get; set; }
+        public bool EmailVerificado { get; set; }
         public DateTime FechaRegistro { get; set; }
     }
 }

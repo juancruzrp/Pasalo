@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="AccesoDatos.cs" />
     <Compile Include="CatalogoAcceso.cs" />
+    <Compile Include="TokenAcceso.cs" />
     <Compile Include="ImpactoAcceso.cs" />
     <Compile Include="MensajeAcceso.cs" />
     <Compile Include="NotificacionAcceso.cs" />

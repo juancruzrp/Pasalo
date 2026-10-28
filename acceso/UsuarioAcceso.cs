@@ -54,7 +54,7 @@ namespace acceso
             AccesoDatos datos = new AccesoDatos();
             try
             {
-                datos.SetearConsulta("SELECT IdUsuario, Email, Nombre, PasswordHash, IdCarrera, Rol, Activo, FechaRegistro FROM Usuario WHERE Email = @Email");
+                datos.SetearConsulta("SELECT IdUsuario, Email, Nombre, PasswordHash, IdCarrera, Rol, Activo, FechaRegistro, EmailVerificado FROM Usuario WHERE Email = @Email");
                 datos.SetearParametro("@Email", email);
                 datos.EjecutarLectura();
 
@@ -74,6 +74,7 @@ namespace acceso
                 // Rol es TINYINT en SQL Server (llega como byte): hay que usar Convert, un cast directo a int falla
                 usuario.Rol = Convert.ToInt32(datos.Lector["Rol"]);
                 usuario.Activo = (bool)datos.Lector["Activo"];
+                usuario.EmailVerificado = (bool)datos.Lector["EmailVerificado"];
                 usuario.FechaRegistro = (DateTime)datos.Lector["FechaRegistro"];
                 return usuario;
             }

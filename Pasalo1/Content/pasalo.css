@@ -1036,4 +1036,81 @@ h1, h2, h3, p {
         .banner-exito .cerrar:hover {
             background: rgba(30, 91, 52, .14);
         }
- 
+.auth-caja {
+    max-width: 420px;
+    margin: 2.5rem auto;
+    padding: 1.75rem;
+    background: #fff;
+    border: 1px solid #e3dccf;
+    border-radius: 14px
+}
+
+    .auth-caja h1 {
+        margin: 0 0 .75rem;
+        font-size: 1.5rem;
+        color: var(--azul, #2F5F66)
+    }
+
+    .auth-caja h2 {
+        font-size: 1.1rem;
+        margin: 1.5rem 0 .5rem
+    }
+
+    .auth-caja label {
+        display: block;
+        margin: 1rem 0 .25rem;
+        font-weight: 600
+    }
+
+.auth-campo {
+    width: 100%;
+    box-sizing: border-box;
+    padding: .65rem .75rem;
+    border: 1px solid #b9b2a4;
+    border-radius: 8px;
+    font: inherit
+}
+
+    .auth-campo:focus-visible, .auth-boton:focus-visible {
+        outline: 3px solid #B84F2E;
+        outline-offset: 2px
+    }
+
+.auth-boton {
+    margin-top: 1.25rem;
+    padding: .7rem 1.25rem;
+    border: 0;
+    border-radius: 8px;
+    background: #2F5F66;
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer
+}
+
+    .auth-boton:hover {
+        background: #244b51
+    }
+
+.auth-validacion {
+    color: #9b2c12;
+    font-size: .9rem
+}
+
+.auth-aviso {
+    margin: 1rem 0;
+    padding: .8rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #cfc8ba;
+    background: #f6f2ea
+}
+
+.auth-ok {
+    border-color: #2F5F66;
+    background: #e8f1f2
+}
+
+.auth-error {
+    border-color: #9b2c12;
+    background: #fbebe6
+}

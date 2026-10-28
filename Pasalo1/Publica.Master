@@ -18,7 +18,7 @@
     <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet" />
 
     <!-- CSS general -->
-    <link href="~/Content/pasalo.css?v=6" rel="stylesheet" runat="server" />
+    <link href="~/Content/pasalo.css?v=8" rel="stylesheet" runat="server" />
 
     <asp:ContentPlaceHolder ID="HeadContent" runat="server"></asp:ContentPlaceHolder>
 </head>
