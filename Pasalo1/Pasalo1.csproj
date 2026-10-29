@@ -99,6 +99,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Calificar.aspx" />
     <Content Include="DetallePublicacion.aspx" />
     <Content Include="VerificarEmail.aspx" />
     <Content Include="SolicitarRecuperacion.aspx" />
@@ -196,6 +197,13 @@
     <Content Include="Site.Mobile.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calificar.aspx.cs">
+      <DependentUpon>Calificar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Calificar.aspx.designer.cs">
+      <DependentUpon>Calificar.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Chat.aspx.cs">
       <DependentUpon>Chat.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

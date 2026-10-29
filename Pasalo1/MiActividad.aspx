@@ -235,6 +235,22 @@
             border-color: #b6dcc6;
         }
 
+        .actividad-btn-calificar {
+            display: inline-block;
+            background: #fff;
+            border: 1px solid #28666d;
+            border-radius: 10px;
+            padding: 11px 18px;
+            color: #28666d;
+            font-weight: 700;
+            text-decoration: none;
+            margin-top: 12px;
+        }
+
+        .actividad-btn-calificar:hover {
+            background: #eaf4f2;
+        }
+
 
 
     </style>
@@ -351,7 +367,7 @@
                                 <span><%#: Eval("MensajeDueno") %></span>
                             </asp:Panel>
 
-                            </asp:Panel>
+                            </asp:Panel>                            
 
                             <!-- Botones solamente para solicitudes pendientes -->
 
@@ -403,6 +419,17 @@
                                     OnClick="btnConfirmarEntrega_Click"
                                     OnClientClick="return confirm('¿Confirmás que el artículo fue entregado? Esta acción no se puede deshacer.');"
                                     CssClass="actividad-btn-entrega" />
+
+                            </asp:Panel>
+
+                            <asp:Panel runat="server"
+                                Visible='<%# Convert.ToBoolean(Eval("EntregaFinalizada")) %>'>
+
+                                <a class="actividad-btn-calificar"
+                                   href='Calificar.aspx?id=<%# Eval("IdSolicitud") %>'>
+                                    <i class="ti ti-star" aria-hidden="true"></i>
+                                    Calificar usuario
+                                </a>
 
                             </asp:Panel>
 
@@ -521,6 +548,17 @@
                                     OnClick="btnConfirmarEntrega_Click"
                                     OnClientClick="return confirm('¿Confirmás que recibiste el artículo? Esta acción no se puede deshacer.');"
                                     CssClass="actividad-btn-entrega" />
+
+                            </asp:Panel>
+
+                            <asp:Panel runat="server"
+                                Visible='<%# Convert.ToBoolean(Eval("EntregaFinalizada")) %>'>
+
+                                <a class="actividad-btn-calificar"
+                                   href='Calificar.aspx?id=<%# Eval("IdSolicitud") %>'>
+                                    <i class="ti ti-star" aria-hidden="true"></i>
+                                    Calificar usuario
+                                </a>
 
                             </asp:Panel>
 
