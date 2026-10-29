@@ -193,6 +193,94 @@ namespace Pasalo1
         }
 
 
+        protected string TextoConfirmacion(object item, bool esDueno)
+        {
+            SolicitudListado solicitud = item as SolicitudListado;
+
+            if (solicitud == null)
+                return "";
+
+            if (solicitud.EntregaFinalizada)
+                return "La entrega fue completada correctamente.";
+
+            bool confirmoYo = esDueno
+                ? solicitud.ConfirmoDuenio
+                : solicitud.ConfirmoSolicitante;
+
+            if (confirmoYo)
+                return "Ya confirmaste la entrega. Esperando a la otra persona.";
+
+            if (solicitud.ConfirmoDuenio || solicitud.ConfirmoSolicitante)
+                return "La otra persona confirmó la entrega. Falta tu confirmación.";
+
+            return "Cuando realicen la entrega, ambos deberán confirmarla.";
+        }
+
+        protected bool PuedeConfirmar(object item, bool esDueno)
+        {
+            SolicitudListado solicitud = item as SolicitudListado;
+
+            if (solicitud == null ||
+                solicitud.Estado != EstadoSolicitud.Aceptada ||
+                solicitud.EntregaFinalizada)
+                return false;
+
+            return esDueno
+                ? !solicitud.ConfirmoDuenio
+                : !solicitud.ConfirmoSolicitante;
+        }
+
+
+        protected void btnConfirmarEntrega_Click(object sender, EventArgs e)
+        {
+            dominio.Usuario usuario =
+                Session["Usuario"] as dominio.Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
+                return;
+            }
+
+            Button boton = sender as Button;
+
+            int idSolicitud;
+
+            if (boton == null ||
+                !int.TryParse(boton.CommandArgument, out idSolicitud))
+                return;
+
+            try
+            {
+                SolicitudNegocio negocio = new SolicitudNegocio();
+
+                negocio.ConfirmarEntrega(
+                    idSolicitud,
+                    usuario.IdUsuario);
+
+                string tab = Request.QueryString["tab"] == "enviadas"
+                    ? "enviadas"
+                    : "recibidas";
+
+                Response.Redirect(
+                    "MiActividad.aspx?tab=" + tab, false);
+
+                Context.ApplicationInstance.CompleteRequest();
+            }
+            catch (NegocioException ex)
+            {
+                MostrarError(ex.Message);
+            }
+            catch (Exception)
+            {
+                MostrarError(
+                    "No se pudo confirmar la entrega. Intentá nuevamente.");
+            }
+        }
+
+
+
 
 
 

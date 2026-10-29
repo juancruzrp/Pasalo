@@ -197,6 +197,46 @@
                 flex-direction: column;
             }
         }
+
+
+
+        .actividad-entrega {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f0f7f4;
+            border: 1px solid #d4e7db;
+            border-radius: 10px;
+        }
+
+        .actividad-entrega p {
+            margin: 0 0 12px;
+            color: #28666d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .actividad-btn-entrega {
+            background: #28666d;
+            border: none;
+            color: white;
+            border-radius: 10px;
+            padding: 11px 18px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .actividad-btn-entrega:hover {
+            background: #1d5056;
+        }
+
+        .actividad-entrega-completada {
+            background: #e0f2e7;
+            border-color: #b6dcc6;
+        }
+
+
+
     </style>
 
     <div class="actividad">
@@ -347,6 +387,25 @@
                                 </a>
                             </asp:Panel>
 
+                            <asp:Panel runat="server"
+                                Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
+                                CssClass="actividad-entrega">
+
+                                <p>
+                                    <%#: TextoConfirmacion(Container.DataItem, true) %>
+                                </p>
+
+                                <asp:Button ID="btnConfirmarEntregaDueno"
+                                    runat="server"
+                                    Text="Confirmar entrega"
+                                    Visible='<%# PuedeConfirmar(Container.DataItem, true) %>'
+                                    CommandArgument='<%# Eval("IdSolicitud") %>'
+                                    OnClick="btnConfirmarEntrega_Click"
+                                    OnClientClick="return confirm('¿Confirmás que el artículo fue entregado? Esta acción no se puede deshacer.');"
+                                    CssClass="actividad-btn-entrega" />
+
+                            </asp:Panel>
+
                         </article>
 
                     </ItemTemplate>
@@ -444,6 +503,25 @@
                                     href='Chat.aspx?id=<%# Eval("IdSolicitud") %>'>
                                     <i class="ti ti-messages" aria-hidden="true"></i> Abrir chat
                                 </a>
+                            </asp:Panel>
+
+                            <asp:Panel runat="server"
+                                Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
+                                CssClass="actividad-entrega">
+
+                                <p>
+                                    <%#: TextoConfirmacion(Container.DataItem, false) %>
+                                </p>
+
+                                <asp:Button ID="btnConfirmarEntregaSolicitante"
+                                    runat="server"
+                                    Text="Confirmar entrega"
+                                    Visible='<%# PuedeConfirmar(Container.DataItem, false) %>'
+                                    CommandArgument='<%# Eval("IdSolicitud") %>'
+                                    OnClick="btnConfirmarEntrega_Click"
+                                    OnClientClick="return confirm('¿Confirmás que recibiste el artículo? Esta acción no se puede deshacer.');"
+                                    CssClass="actividad-btn-entrega" />
+
                             </asp:Panel>
 
                         </article>

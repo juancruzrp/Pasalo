@@ -137,6 +137,27 @@ namespace negocio
         }
 
 
+        public void ConfirmarEntrega(int idSolicitud, int idUsuario)
+        {
+            if (idSolicitud <= 0 || idUsuario <= 0)
+                throw new NegocioException(
+                    "Los datos de la entrega no son válidos.");
+
+            try
+            {
+                acceso.ConfirmarEntrega(idSolicitud, idUsuario);
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Number >= 50201 && ex.Number <= 50206)
+                    throw new NegocioException(ex.Message);
+
+                throw;
+            }
+        }
+
+
+
 
 
 

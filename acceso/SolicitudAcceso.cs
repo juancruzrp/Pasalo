@@ -163,7 +163,10 @@ namespace acceso
                 s.ObjetoOfrecido,
                 s.Estado,
                 s.FechaSolicitud,
-                s.MotivoRespuesta,  
+                s.MotivoRespuesta,
+                s.ConfirmoDuenio,
+                s.ConfirmoSolicitante,
+                s.FechaEntrega,
                 u.Nombre AS NombreUsuario
             FROM Solicitud s
             INNER JOIN Publicacion p
@@ -209,7 +212,10 @@ namespace acceso
                 s.ObjetoOfrecido,
                 s.Estado,
                 s.FechaSolicitud,
-                s.MotivoRespuesta,  
+                s.MotivoRespuesta,
+                s.ConfirmoDuenio,
+                s.ConfirmoSolicitante,
+                s.FechaEntrega,
                 u.Nombre AS NombreUsuario
             FROM Solicitud s
             INNER JOIN Publicacion p
@@ -273,6 +279,17 @@ namespace acceso
                 lector["MotivoRespuesta"] == DBNull.Value
                 ? (int?)null
                 : Convert.ToInt32(lector["MotivoRespuesta"]);
+
+            solicitud.ConfirmoDuenio =
+                Convert.ToBoolean(lector["ConfirmoDuenio"]);
+
+            solicitud.ConfirmoSolicitante =
+                Convert.ToBoolean(lector["ConfirmoSolicitante"]);
+
+            solicitud.FechaEntrega =
+                lector["FechaEntrega"] == DBNull.Value
+                    ? (DateTime?)null
+                    : Convert.ToDateTime(lector["FechaEntrega"]);
 
 
             return solicitud;
@@ -387,6 +404,142 @@ namespace acceso
                 }
             }
         }
+
+
+
+
+
+
+
+
+
+        public void ConfirmarEntrega(int idSolicitud, int idUsuario)
+        {
+            using (SqlConnection conexion = new SqlConnection(
+                "Data Source=localhost\\SQLEXPRESS;" +
+                "Initial Catalog=Pasalo;Integrated Security=True"))
+            {
+                conexion.Open();
+
+                using (SqlTransaction transaccion =
+                    conexion.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    try
+                    {
+                        string sql = @"
+                    DECLARE @idPublicacion INT;
+                    DECLARE @idDueno INT;
+                    DECLARE @idSolicitante INT;
+                    DECLARE @estadoSolicitud TINYINT;
+                    DECLARE @estadoPublicacion TINYINT;
+                    DECLARE @confirmoDueno BIT;
+                    DECLARE @confirmoSolicitante BIT;
+                    DECLARE @fechaEntrega DATETIME2;
+
+                    SELECT @idPublicacion = IdPublicacion
+                    FROM Solicitud
+                    WHERE IdSolicitud = @idSolicitud;
+
+                    IF @idPublicacion IS NULL
+                        THROW 50201, 'La solicitud no existe.', 1;
+
+                    SELECT
+                        @idDueno = IdUsuario,
+                        @estadoPublicacion = Estado
+                    FROM Publicacion WITH (UPDLOCK, HOLDLOCK)
+                    WHERE IdPublicacion = @idPublicacion;
+
+                    SELECT
+                        @idSolicitante = IdSolicitante,
+                        @estadoSolicitud = Estado,
+                        @confirmoDueno = ConfirmoDuenio,
+                        @confirmoSolicitante = ConfirmoSolicitante,
+                        @fechaEntrega = FechaEntrega
+                    FROM Solicitud WITH (UPDLOCK, HOLDLOCK)
+                    WHERE IdSolicitud = @idSolicitud;
+
+                    IF @idUsuario <> @idDueno
+                       AND @idUsuario <> @idSolicitante
+                        THROW 50202,
+                            'No tenés permiso para confirmar esta entrega.', 1;
+
+                    IF @estadoSolicitud <> 1
+                        THROW 50203,
+                            'La solicitud no está aceptada.', 1;
+
+                    IF @fechaEntrega IS NOT NULL
+                        THROW 50204,
+                            'Esta entrega ya fue completada.', 1;
+
+                    IF @estadoPublicacion <> 1
+                        THROW 50205,
+                            'La publicación no está reservada.', 1;
+
+                    IF @idUsuario = @idDueno
+                    BEGIN
+                        IF @confirmoDueno = 1
+                            THROW 50206,
+                                'Ya confirmaste esta entrega.', 1;
+
+                        UPDATE Solicitud
+                        SET ConfirmoDuenio = 1
+                        WHERE IdSolicitud = @idSolicitud;
+                    END
+                    ELSE
+                    BEGIN
+                        IF @confirmoSolicitante = 1
+                            THROW 50206,
+                                'Ya confirmaste esta entrega.', 1;
+
+                        UPDATE Solicitud
+                        SET ConfirmoSolicitante = 1
+                        WHERE IdSolicitud = @idSolicitud;
+                    END;
+
+                    IF EXISTS (
+                        SELECT 1
+                        FROM Solicitud
+                        WHERE IdSolicitud = @idSolicitud
+                          AND ConfirmoDuenio = 1
+                          AND ConfirmoSolicitante = 1
+                    )
+                    BEGIN
+                        UPDATE Solicitud
+                        SET FechaEntrega = SYSUTCDATETIME()
+                        WHERE IdSolicitud = @idSolicitud;
+
+                        UPDATE Publicacion
+                        SET Estado = 2
+                        WHERE IdPublicacion = @idPublicacion;
+                    END;";
+
+                        using (SqlCommand comando =
+                            new SqlCommand(sql, conexion, transaccion))
+                        {
+                            comando.Parameters.Add("@idSolicitud", SqlDbType.Int)
+                                .Value = idSolicitud;
+
+                            comando.Parameters.Add("@idUsuario", SqlDbType.Int)
+                                .Value = idUsuario;
+
+                            comando.ExecuteNonQuery();
+                        }
+
+                        transaccion.Commit();
+                    }
+                    catch
+                    {
+                        transaccion.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+
+
+
+
 
 
 

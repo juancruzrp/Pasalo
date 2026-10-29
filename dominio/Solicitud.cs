@@ -100,6 +100,35 @@ namespace dominio
         }
 
 
+
+        public bool ConfirmoDuenio { get; set; }
+        public bool ConfirmoSolicitante { get; set; }
+        public DateTime? FechaEntrega { get; set; }
+
+        public bool EntregaFinalizada
+        {
+            get { return FechaEntrega.HasValue; }
+        }
+
+        public string EstadoEntregaTexto
+        {
+            get
+            {
+                if (EntregaFinalizada)
+                    return "Entrega completada";
+
+                if (ConfirmoDuenio && ConfirmoSolicitante)
+                    return "Entrega confirmada";
+
+                if (ConfirmoDuenio || ConfirmoSolicitante)
+                    return "Esperando la confirmación de la otra persona";
+
+                return "Pendiente de entrega";
+            }
+        }
+
+
+
     }
 
 
