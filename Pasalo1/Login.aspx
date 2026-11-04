@@ -292,9 +292,11 @@
                 <!-- RECUPERAR CONTRASEÑA -->
                 <div class="login-opciones">
 
-                    <a href="#" class="login-recuperar">
-                        ¿Olvidaste tu contraseña?
-                    </a>
+                   
+                <a href="SolicitarRecuperacion.aspx" class="login-recuperar">
+                    ¿Olvidaste tu contraseña?
+                </a>
+                 
 
                 </div>
 
