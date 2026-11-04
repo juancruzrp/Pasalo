@@ -186,6 +186,18 @@
             margin: 0;
         }
 
+        .login-aviso-ok {
+    background: #e8f1f2;
+    border: 1px solid #28666d;
+    color: #244f53;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+.login-aviso-ok a { color: #28666d; font-weight: 700; }
+
+
         .login-pie {
             text-align: center;
             margin-top: 25px;
@@ -255,6 +267,16 @@
         <i class="ti ti-alert-circle" aria-hidden="true"></i>
         <asp:Label ID="lblError" runat="server" />
     </asp:Panel>
+
+                <!-- mensaje -->
+             <% if (Request.QueryString["registro"] == "ok") { %>
+                    <div class="login-aviso-ok" role="status">
+                        <strong>¡Cuenta creada!</strong>
+                        Te enviamos un correo para confirmarla. Revisá tu bandeja de entrada y el spam.
+                        ¿No te llegó? <a href="VerificarEmail.aspx">Pedir uno nuevo</a>
+                    </div>
+                <% } %>
+
                 <!-- CORREO -->
                 <div class="login-grupo">
 
