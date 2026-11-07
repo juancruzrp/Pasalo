@@ -473,12 +473,24 @@
                     </details>
                     <details>
                         <summary>¿Qué pasa si la otra persona no se presenta?</summary>
-                        <p><span class="completar">[COMPLETAR: definir qué pasa si la otra persona no se presenta, por ejemplo cancelar la reserva para que el objeto vuelva a estar disponible]</span></p>
+                        <p>La entrega se confirma en persona: cuando se encuentran, la persona que recibe el objeto le da un código a quien lo entrega, y esa persona lo ingresa en PÁSALO. Recién ahí la donación o el intercambio queda como entregado.</p>
+                        <p>Si la otra persona no se presenta, o el código no se ingresa dentro de los <strong>7 días</strong> posteriores a la aceptación de la solicitud, la operación se cancela automáticamente, la reserva se libera y la publicación vuelve a estar disponible.</p>
+                        <p>También podés cancelar antes desde <strong>Mi actividad</strong> si ya no vas a concretar la entrega.</p>
                     </details>
                     <details>
                         <summary>¿Qué no se puede publicar?</summary>
-                        <p><span class="completar">[COMPLETAR: lista de objetos que no se pueden publicar, según lo que decida el equipo]</span></p>
-                    </details>
+                       <p>PÁSALO es para compartir cosas útiles para la vida universitaria, en buen estado. No se pueden publicar:</p>
+                    <ul>
+                        <li><strong>Objetos en mal estado:</strong> rotos, incompletos, que no funcionen o que no se puedan usar con seguridad.</li>
+                        <li><strong>Cosas ajenas a la vida académica:</strong> vehículos, muebles grandes, artículos que no tengan relación con estudiar o cursar.</li>
+                        <li><strong>Artículos peligrosos o prohibidos:</strong> armas, medicamentos, alcohol, tabaco, sustancias ilegales o cualquier cosa que no se pueda entregar legalmente.</li>
+                        <li><strong>Alimentos y bebidas.</strong></li>
+                        <li><strong>Dinero o servicios:</strong> PÁSALO es solo para donar o intercambiar objetos, no para vender.</li>
+                        <li><strong>Animales.</strong></li>
+                        <li><strong>Contenido ofensivo</strong> en el título, la descripción o las fotos.</li>
+                    </ul>
+                    <p>Si una publicación incumple estas reglas, puede ser reportada y dada de baja por la moderación.</p>
+                                        </details>
                 </div>
             </div>
         </section>
@@ -498,8 +510,9 @@
                     promoviendo el consumo responsable, la reutilización de recursos y la colaboración dentro
                     de la comunidad educativa.
                 </p>
-                <p><span class="completar">[COMPLETAR: materia, año y docentes del proyecto]</span></p>
-                <p><span class="completar">[COMPLETAR: integrantes del equipo]</span></p>
+                <p><strong>Materia:</strong> Proyecto final, Programación, 2026</p>
+                    <p><strong>Docentes:</strong> Lorena Palermo, José Rodríguez y Natalia Spini</p>
+                    <p><strong>Integrantes del equipo:</strong> Juan Cruz Mitra, Gonzalo Iglesias e Ivana Escobar</p>
             </div>
         </section>
 
@@ -538,7 +551,11 @@
                     </div>
                     <div>
                         <h3>Contacto</h3>
-                        <p><span class="completar">[COMPLETAR: correo o canal de contacto]</span></p>
+                        <p>
+                        <i class="ti ti-mail" aria-hidden="true"></i>
+                        Escribinos a
+                        <a href="mailto:pasalo@gmail.com">pasalo@gmail.com</a>
+                    </p>
                     </div>
                 </div>
                 <p class="pie-copia">PÁSALO · Comunidad universitaria UTN FRGP</p>
