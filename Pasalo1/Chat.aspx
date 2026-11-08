@@ -121,8 +121,7 @@
                         </div>
                         <% } %>
                     </div>
-
-                    <div class="chat-enviar">
+                                        <div class="chat-enviar">
                         <asp:TextBox ID="txtMensaje" runat="server" CssClass="chat-texto" MaxLength="1000"
                             placeholder="Escribí un mensaje…" autocomplete="off" aria-label="Mensaje" />
                         <asp:Button ID="btnEnviar" runat="server" Text="Enviar" CssClass="chat-boton" OnClick="btnEnviar_Click" />
@@ -135,14 +134,19 @@
                             if (caja) caja.scrollTop = caja.scrollHeight;
 
                             // Cada 20 s trae los mensajes nuevos, pero solo si no estás escribiendo
+                            // ni leyendo o dictando con la voz
                             var txt = document.getElementById('<%= txtMensaje.ClientID %>');
                             setInterval(function () {
-                                if (txt && txt.value === '' && document.activeElement !== txt) {
+                                if (txt && txt.value === '' && document.activeElement !== txt
+                                    && !(window.PasaloVoz && PasaloVoz.ocupado())) {
                                     window.location.href = 'Chat.aspx?id=<%= Actual != null ? Actual.IdSolicitud : 0 %>';
                                 }
                             }, 20000);
                         })();
                     </script>
+
+                    <script src="<%= ResolveUrl("~/Scripts/voz.js") %>"></script>
+                    <script>PasaloVoz.iniciar({});</script>
 
                 </asp:Panel>
             </section>

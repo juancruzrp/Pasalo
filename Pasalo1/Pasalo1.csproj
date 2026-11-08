@@ -101,6 +101,7 @@
   <ItemGroup>
     <Content Include="Calificar.aspx" />
     <Content Include="DetallePublicacion.aspx" />
+    <Content Include="Scripts\Voz.js" />
     <Content Include="VerificarEmail.aspx" />
     <Content Include="SolicitarRecuperacion.aspx" />
     <Content Include="RecuperarPassword.aspx" />

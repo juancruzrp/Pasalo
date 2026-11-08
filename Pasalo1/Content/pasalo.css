@@ -1114,3 +1114,81 @@ h1, h2, h3, p {
     border-color: #9b2c12;
     background: #fbebe6
 }
+
+/* voz chat*/
+.voz-boton {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1.5px solid #28666d;
+    border-radius: 999px;
+    background: #fff;
+    color: #28666d;
+    font: inherit;
+    font-size: .9rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+    .voz-boton:hover {
+        background: #e8f1f2;
+    }
+
+    .voz-boton:focus-visible {
+        outline: 3px solid #B84F2E;
+        outline-offset: 2px;
+    }
+    /* Activo: se distingue por color, ícono y texto ("Detener"), no solo por el color */
+    .voz-boton[aria-pressed="true"] {
+        background: #28666d;
+        color: #fff;
+    }
+
+/* Dentro de una burbuja del chat */
+.burbuja .voz-boton {
+    margin-top: 8px;
+    padding: 3px 10px;
+    font-size: .8rem;
+}
+
+.burbuja--mia .voz-boton {
+    border-color: #fff;
+}
+
+    .burbuja--mia .voz-boton[aria-pressed="true"] {
+        background: #fff;
+        color: #28666d;
+    }
+
+.burbuja--otra .voz-boton[aria-pressed="true"] {
+    background: #28666d;
+    color: #fff;
+}
+
+/* Junto al cuadro de mensaje */
+.chat-enviar .voz-boton {
+    align-self: stretch;
+    padding: 0 14px;
+    border-radius: 10px;
+}
+
+.voz-estado {
+    margin: 0;
+    padding: 0 20px 10px;
+    font-size: .9rem;
+    color: #4a5b5d;
+    min-height: 1.2em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .voz-boton[aria-pressed="true"] .voz-icono {
+        animation: vozPulso 1s ease-in-out infinite;
+    }
+}
+
+@keyframes vozPulso {
+    50% {
+        opacity: .45;
+    }
+}
