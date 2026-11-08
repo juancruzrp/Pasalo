@@ -16,7 +16,7 @@ namespace acceso
             try
             {
                 datos.SetearConsulta(
-                    "SELECT u.IdUsuario, u.Nombre, u.FechaRegistro, ca.Nombre AS Carrera, f.IdFacultad, f.Nombre AS Facultad " +
+                    "SELECT u.IdUsuario, u.Nombre, u.FechaRegistro, u.Descripcion, u.IdCarrera, ca.Nombre AS Carrera, f.IdFacultad, f.Nombre AS Facultad " +
                     "FROM Usuario u " +
                     "LEFT JOIN Carrera ca ON ca.IdCarrera = u.IdCarrera " +
                     "LEFT JOIN Facultad f ON f.IdFacultad = ca.IdFacultad " +
@@ -30,6 +30,8 @@ namespace acceso
                     perfil.IdUsuario = (int)datos.Lector["IdUsuario"];
                     perfil.Nombre = (string)datos.Lector["Nombre"];
                     perfil.FechaRegistro = (DateTime)datos.Lector["FechaRegistro"];
+                    perfil.Descripcion = datos.Lector["Descripcion"] is DBNull ? null : (string)datos.Lector["Descripcion"];
+                    perfil.IdCarrera = datos.Lector["IdCarrera"] is DBNull ? (int?)null : (int)datos.Lector["IdCarrera"];
                     perfil.Carrera = datos.Lector["Carrera"] is DBNull ? null : (string)datos.Lector["Carrera"];
                     perfil.IdFacultad = datos.Lector["IdFacultad"] is DBNull ? (int?)null : (int)datos.Lector["IdFacultad"];
                     perfil.Facultad = datos.Lector["Facultad"] is DBNull ? null : (string)datos.Lector["Facultad"];

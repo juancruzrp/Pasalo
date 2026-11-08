@@ -101,6 +101,7 @@
   <ItemGroup>
     <Content Include="Calificar.aspx" />
     <Content Include="DetallePublicacion.aspx" />
+    <Content Include="EditarPerfil.aspx" />
     <Content Include="Scripts\Voz.js" />
     <Content Include="VerificarEmail.aspx" />
     <Content Include="SolicitarRecuperacion.aspx" />
@@ -218,6 +219,13 @@
     </Compile>
     <Compile Include="DetallePublicacion.aspx.designer.cs">
       <DependentUpon>DetallePublicacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EditarPerfil.aspx.cs">
+      <DependentUpon>EditarPerfil.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditarPerfil.aspx.designer.cs">
+      <DependentUpon>EditarPerfil.aspx</DependentUpon>
     </Compile>
     <Compile Include="VerificarEmail.aspx.cs">
       <DependentUpon>VerificarEmail.aspx</DependentUpon>

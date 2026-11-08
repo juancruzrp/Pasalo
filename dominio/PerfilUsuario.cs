@@ -9,6 +9,8 @@ namespace dominio
         public string Nombre { get; set; }
         public string Carrera { get; set; }
         public int? IdFacultad { get; set; }
+        public int? IdCarrera { get; set; }
+        public string Descripcion { get; set; }
         public string Facultad { get; set; }
         public DateTime FechaRegistro { get; set; }
 

@@ -12,6 +12,13 @@
                     <h1 id="t-perfil"><%: Datos.Nombre %></h1>
                     <p><%: CarreraYFacultad %></p>
                     <p class="suave" style="font-size:13px"><%: MiembroDesde %></p>
+                    <% if (!string.IsNullOrWhiteSpace(Datos.Descripcion)) { %>
+                    <p class="perfil-descripcion"><%: Datos.Descripcion %></p>
+                    <% } %>
+                    <% if (EsPropio) { %>
+                    <a class="perfil-editar" href="EditarPerfil.aspx"><i class="ti ti-edit" aria-hidden="true"></i> Editar perfil</a>
+                    <% } %>
+
                 </div>
             </div>
             <div class="perfil-valoracion">
