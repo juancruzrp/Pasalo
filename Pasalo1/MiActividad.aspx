@@ -277,16 +277,6 @@
 
 
 
-        <asp:Panel ID="Panel1"
-            runat="server"
-            Visible="false"
-            Style="background:#fce8e8;color:#ad3434;
-                   padding:14px;border-radius:10px;margin-bottom:20px;">
-
-            <asp:Label ID="Label1" runat="server" />
-
-        </asp:Panel>
-
         <!-- Pestañas -->
 
         <nav class="actividad-tabs"
