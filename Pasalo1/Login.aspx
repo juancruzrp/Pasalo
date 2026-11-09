@@ -260,7 +260,7 @@
 
                     <asp:Panel ID="pnlExito" runat="server" Visible="false" CssClass="login-mensaje login-mensaje--ok" role="status">
         <i class="ti ti-circle-check" aria-hidden="true"></i>
-        <span>Tu cuenta fue creada. Ya podés iniciar sesión.</span>
+        <span>Tu cuenta fue creada. Te mandamos un correo: confirmalo para poder iniciar sesión.</span>
     </asp:Panel>
 
     <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="login-mensaje login-mensaje--error" role="alert">

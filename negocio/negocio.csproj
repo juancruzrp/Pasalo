@@ -47,6 +47,7 @@
     <Compile Include="EmailServicio.cs" />
     <Compile Include="ImpactoNegocio.cs" />
     <Compile Include="MensajeNegocio.cs" />
+    <Compile Include="ModeracionNegocio.cs" />
     <Compile Include="NotificacionNegocio.cs" />
     <Compile Include="PublicacionNegocio.cs" />
     <Compile Include="NegocioException.cs" />

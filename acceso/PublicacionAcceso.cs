@@ -84,6 +84,8 @@ namespace acceso
                 ORDER BY fp.Orden, fp.IdFoto
             ) f
             WHERE p.Estado = 0
+              AND p.Suspendida = 0
+              AND EXISTS (SELECT 1 FROM Usuario du WHERE du.IdUsuario = p.IdUsuario AND du.Activo = 1)
               AND (@categoria = 0 OR p.IdCategoria = @categoria)
               AND (@carrera = 0 OR p.IdCarrera = @carrera)
               AND (
@@ -176,6 +178,7 @@ namespace acceso
                 p.Modalidad,
                 p.Estado,
                 p.FechaPublicacion,
+                p.Suspendida,
                 c.IdCategoria,
                 c.Nombre AS CategoriaNombre,
                 ca.IdCarrera,
@@ -214,6 +217,9 @@ namespace acceso
 
                         FechaPublicacion = Convert.ToDateTime(
                             datos.Lector["FechaPublicacion"]),
+
+                        Suspendida = Convert.ToBoolean(
+                            datos.Lector["Suspendida"]),
 
                         Categoria = new Categoria
                         {

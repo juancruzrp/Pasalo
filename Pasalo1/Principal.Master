@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" rel="stylesheet" />
-     <link href="~/Content/pasalo.css?v=12" rel="stylesheet" runat="server" />
+     <link href="~/Content/pasalo.css?v=13" rel="stylesheet" runat="server" />
     <style>
         /* Campanita de notificaciones (se llena con Notificaciones.ashx) */
         .campana { position: relative; }
@@ -51,6 +51,7 @@
                     <a href="Default.aspx"<%= (Request.Path.EndsWith("Default.aspx", StringComparison.OrdinalIgnoreCase) || Request.Path.IndexOf("DetallePublicacion", StringComparison.OrdinalIgnoreCase) >= 0) ? " aria-current=\"page\"" : "" %>>Catálogo</a>
     <a href="MiActividad.aspx"<%= (Request.Path.IndexOf("MiActividad", StringComparison.OrdinalIgnoreCase) >= 0 || Request.Path.IndexOf("Calificar", StringComparison.OrdinalIgnoreCase) >= 0) ? " aria-current=\"page\"" : "" %>>Mi actividad</a>
                 <a href="Chat.aspx"<%= Request.Path.IndexOf("Chat", StringComparison.OrdinalIgnoreCase) >= 0 ? " aria-current=\"page\"" : "" %>>Chat<span class="punto punto--texto" id="chat-n" hidden></span></a>
+                <% if (EsModerador) { %><a href="Moderacion.aspx"<%= Request.Path.IndexOf("Moderacion", StringComparison.OrdinalIgnoreCase) >= 0 ? " aria-current=\"page\"" : "" %>>Moderación</a><% } %>
                 <details class="campana" id="campana">
                     <summary class="icono-btn" aria-label="Notificaciones"><i class="ti ti-bell" aria-hidden="true"></i><span class="punto" id="campana-n" hidden></span></summary>
                     <div class="campana-panel" id="campana-lista"><p class="campana-vacia">No tenés notificaciones nuevas.</p></div>

@@ -33,11 +33,13 @@ namespace acceso
                             DECLARE @estado TINYINT;
                             DECLARE @dueno INT;
                             DECLARE @modalidad TINYINT;
+                            DECLARE @suspendida BIT;
 
                             SELECT
                                 @estado = Estado,
                                 @dueno = IdUsuario,
-                                @modalidad = Modalidad
+                                @modalidad = Modalidad,
+                                @suspendida = Suspendida
                             FROM Publicacion WITH (UPDLOCK, HOLDLOCK)
                             WHERE IdPublicacion = @idPublicacion;
 
@@ -45,7 +47,7 @@ namespace acceso
                                 THROW 50001,
                                     'La publicación no existe.', 1;
 
-                            IF @estado <> 0
+                            IF @estado <> 0 OR @suspendida = 1
                                 THROW 50002,
                                     'El artículo ya no está disponible.', 1;
 

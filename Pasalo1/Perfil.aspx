@@ -17,6 +17,8 @@
                     <% } %>
                     <% if (EsPropio) { %>
                     <a class="perfil-editar" href="EditarPerfil.aspx"><i class="ti ti-edit" aria-hidden="true"></i> Editar perfil</a>
+                    <% } else { %>
+                    <a class="perfil-editar" href="Reportar.aspx?usu=<%= Datos.IdUsuario %>"><i class="ti ti-flag" aria-hidden="true"></i> Reportar a esta persona</a>
                     <% } %>
 
                 </div>

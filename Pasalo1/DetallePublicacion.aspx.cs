@@ -182,6 +182,14 @@ namespace Pasalo1
                     return;
                 }
 
+                // Una publicación suspendida solo la ve un moderador (el resto recibe el mismo aviso que si no existiera)
+                dominio.Usuario visitante = Session["Usuario"] as dominio.Usuario;
+                if (PublicacionActual.Suspendida && (visitante == null || visitante.Rol != 1))
+                {
+                    MostrarNoEncontrada();
+                    return;
+                }
+
                 pnlDetalle.Visible = true;
                 pnlNoEncontrada.Visible = false;
 

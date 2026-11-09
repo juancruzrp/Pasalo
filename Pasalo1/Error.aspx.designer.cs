@@ -11,5 +11,15 @@ namespace Pasalo1
 {
     public partial class ErrorPagina
     {
+
+        /// <summary>
+        /// Control lblTitulo.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblTitulo;
+
+        /// <summary>
+        /// Control lblMensaje.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblMensaje;
     }
 }

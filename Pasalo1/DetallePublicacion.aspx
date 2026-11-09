@@ -299,6 +299,11 @@
                            style="font-size:13px;">
                             Miembro desde <%= FechaRegistroTexto %>
                         </p>
+                        <% if (!EsPropietario) { %>
+                        <p style="font-size:13px; margin-top:6px;">
+                            <a class="enlace" href="Reportar.aspx?pub=<%= PublicacionActual.Id %>"><i class="ti ti-flag" aria-hidden="true"></i> Reportar publicación</a>
+                        </p>
+                        <% } %>
                     </div>
 
                 </section>

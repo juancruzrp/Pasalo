@@ -47,6 +47,7 @@
     <Compile Include="TokenAcceso.cs" />
     <Compile Include="ImpactoAcceso.cs" />
     <Compile Include="MensajeAcceso.cs" />
+    <Compile Include="ModeracionAcceso.cs" />
     <Compile Include="NotificacionAcceso.cs" />
     <Compile Include="PublicacionAcceso.cs" />
     <Compile Include="SolicitudAcceso.cs" />

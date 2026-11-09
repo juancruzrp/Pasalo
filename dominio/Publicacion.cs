@@ -30,6 +30,7 @@ namespace dominio
             public ModalidadPublicacion? Modalidad { get; set; }  // null = todavía no eligió
             public EstadoPublicacion Estado { get; set; }
             public DateTime FechaPublicacion { get; set; }
+            public bool Suspendida { get; set; }                  // true = oculta por moderación
             public List<FotoPublicacion> Fotos { get; set; } = new List<FotoPublicacion>();
         }
     }

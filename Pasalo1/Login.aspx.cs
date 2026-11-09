@@ -35,6 +35,13 @@ namespace Pasalo1
             // Viene de Registro.aspx
             if (Request.QueryString["registro"] == "ok")
                 pnlExito.Visible = true;
+
+            // La cuenta fue suspendida por un moderador mientras estaba navegando
+            if (Request.QueryString["suspendida"] == "1")
+            {
+                lblError.Text = "Tu cuenta fue suspendida por moderación. Si creés que es un error, contactá al equipo.";
+                pnlError.Visible = true;
+            }
         }
 
         protected void btnIngresar_Click(object sender, EventArgs e)

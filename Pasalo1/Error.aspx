@@ -15,8 +15,8 @@
 <asp:Content ID="ContentMain" ContentPlaceHolderID="MainContent" runat="server">
     <div class="error-pagina">
         <div class="error-caja">
-            <h1>Ups, algo salió mal</h1>
-            <p>Ocurrió un problema inesperado. Ya podés volver a intentar; si sigue pasando, avisale al equipo.</p>
+            <h1><asp:Label ID="lblTitulo" runat="server" Text="Ups, algo salió mal" /></h1>
+            <p><asp:Label ID="lblMensaje" runat="server" Text="Ocurrió un problema inesperado. Ya podés volver a intentar; si sigue pasando, avisale al equipo." /></p>
             <a href="Default.aspx">Volver al catálogo</a>
             <a href="Inicio.aspx" class="sec">Ir al inicio</a>
         </div>

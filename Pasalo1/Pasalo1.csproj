@@ -107,6 +107,8 @@
     <Content Include="SolicitarRecuperacion.aspx" />
     <Content Include="RecuperarPassword.aspx" />
     <Content Include="Error.aspx" />
+    <Content Include="Moderacion.aspx" />
+    <Content Include="Reportar.aspx" />
     <Content Include="Inicio.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="MiActividad.aspx" />
@@ -254,6 +256,20 @@
     </Compile>
     <Compile Include="Inicio.aspx.designer.cs">
       <DependentUpon>Inicio.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Moderacion.aspx.cs">
+      <DependentUpon>Moderacion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Moderacion.aspx.designer.cs">
+      <DependentUpon>Moderacion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reportar.aspx.cs">
+      <DependentUpon>Reportar.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reportar.aspx.designer.cs">
+      <DependentUpon>Reportar.aspx</DependentUpon>
     </Compile>
     <Compile Include="Error.aspx.cs">
       <DependentUpon>Error.aspx</DependentUpon>
