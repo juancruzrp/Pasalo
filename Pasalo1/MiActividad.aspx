@@ -252,6 +252,19 @@
         }
 
 
+        .actividad-input-codigo {
+            padding: 11px 14px;
+            border: 1px solid #cbd8d5;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            width: 160px;
+            margin-right: 10px;
+        }
+
+
 
     </style>
 
@@ -394,20 +407,27 @@
                             </asp:Panel>
 
                             <asp:Panel runat="server"
-                                Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
+                                Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 && !Convert.ToBoolean(Eval("EntregaFinalizada")) %>'
                                 CssClass="actividad-entrega">
 
                                 <p>
-                                    <%#: TextoConfirmacion(Container.DataItem, true) %>
+                                    Para confirmar la entrega, ingresá el código de
+                                    6 caracteres que te proporcionó el solicitante.
                                 </p>
 
-                                <asp:Button ID="btnConfirmarEntregaDueno"
+                                <asp:TextBox
+                                    ID="txtCodigoEntrega"
+                                    runat="server"
+                                    MaxLength="6"
+                                    CssClass="actividad-input-codigo"
+                                    placeholder="Ej: ABC123" />
+
+                                <asp:Button
+                                    ID="btnConfirmarCodigo"
                                     runat="server"
                                     Text="Confirmar entrega"
-                                    Visible='<%# PuedeConfirmar(Container.DataItem, true) %>'
                                     CommandArgument='<%# Eval("IdSolicitud") %>'
-                                    OnClick="btnConfirmarEntrega_Click"
-                                    OnClientClick="return confirm('¿Confirmás que el artículo fue entregado? Esta acción no se puede deshacer.');"
+                                    OnClick="btnConfirmarCodigo_Click"
                                     CssClass="actividad-btn-entrega" />
 
                             </asp:Panel>
@@ -526,18 +546,17 @@
                                 Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
                                 CssClass="actividad-entrega">
 
-                                <p>
-                                    <%#: TextoConfirmacion(Container.DataItem, false) %>
-                                </p>
+                                
+                                <asp:Panel runat="server"
+                                 Visible='<%# !string.IsNullOrEmpty(Convert.ToString(Eval("CodigoEntrega"))) && !Convert.ToBoolean(Eval("EntregaFinalizada")) %>'>
 
-                                <asp:Button ID="btnConfirmarEntregaSolicitante"
-                                    runat="server"
-                                    Text="Confirmar entrega"
-                                    Visible='<%# PuedeConfirmar(Container.DataItem, false) %>'
-                                    CommandArgument='<%# Eval("IdSolicitud") %>'
-                                    OnClick="btnConfirmarEntrega_Click"
-                                    OnClientClick="return confirm('¿Confirmás que recibiste el artículo? Esta acción no se puede deshacer.');"
-                                    CssClass="actividad-btn-entrega" />
+                                    <strong style="font-size:24px; letter-spacing:3px; color:#28666d;">
+                                        <%#: Eval("CodigoEntrega") %>
+                                    </strong>
+
+                                    <p>Mostrale este código al dueño cuando recibas el artículo.</p>
+
+                                </asp:Panel>
 
                             </asp:Panel>
 

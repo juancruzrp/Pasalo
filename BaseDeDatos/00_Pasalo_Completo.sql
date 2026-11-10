@@ -104,6 +104,9 @@ IF OBJECT_ID(N'Solicitud', N'U') IS NULL
         CONSTRAINT UQ_Solicitud_Publicacion_Solicitante UNIQUE (IdPublicacion, IdSolicitante)
     );
 
+-- Código para confirmar la entrega
+IF COL_LENGTH(N'Solicitud', N'CodigoEntrega') IS NULL
+    ALTER TABLE Solicitud ADD CodigoEntrega VARCHAR(6) NULL;
 IF COL_LENGTH(N'Solicitud', N'FechaRespuesta') IS NULL
     ALTER TABLE Solicitud ADD FechaRespuesta DATETIME2 NULL;      -- cuándo se respondió
 IF COL_LENGTH(N'Solicitud', N'MotivoRespuesta') IS NULL

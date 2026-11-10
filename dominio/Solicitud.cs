@@ -38,6 +38,7 @@ namespace dominio
 
         public EstadoSolicitud Estado { get; set; }
         public DateTime FechaSolicitud { get; set; }
+        public string CodigoEntrega { get; set; }
 
         public string EstadoTexto
         {

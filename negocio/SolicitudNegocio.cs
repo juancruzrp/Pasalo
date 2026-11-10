@@ -137,28 +137,37 @@ namespace negocio
         }
 
 
-        public void ConfirmarEntrega(int idSolicitud, int idUsuario)
-        {
-            if (idSolicitud <= 0 || idUsuario <= 0)
-                throw new NegocioException(
-                    "Los datos de la entrega no son válidos.");
+       
 
-            try
+        public void ConfirmarEntregaConCodigo(
+        int idSolicitud,
+        int idDueno,
+        string codigo)
             {
-                acceso.ConfirmarEntrega(idSolicitud, idUsuario);
+                if (idSolicitud <= 0 || idDueno <= 0)
+                    throw new NegocioException(
+                        "Los datos de la solicitud no son válidos.");
+
+                if (string.IsNullOrWhiteSpace(codigo) ||
+                    codigo.Trim().Length != 6)
+                    throw new NegocioException(
+                        "Ingresá un código de entrega válido de 6 caracteres.");
+
+                try
+                {
+                    acceso.ConfirmarEntregaConCodigo(
+                        idSolicitud,
+                        idDueno,
+                        codigo.Trim().ToUpperInvariant());
+                }
+                catch (SqlException ex)
+                {
+                    if (ex.Number >= 50201 && ex.Number <= 50210)
+                        throw new NegocioException(ex.Message);
+
+                    throw;
+                }
             }
-            catch (SqlException ex)
-            {
-                if (ex.Number >= 50201 && ex.Number <= 50206)
-                    throw new NegocioException(ex.Message);
-
-                throw;
-            }
-        }
-
-
-
-
 
 
 

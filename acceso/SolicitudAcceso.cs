@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
+using System.Security.Cryptography;
 using dominio;
 
 namespace acceso
@@ -73,21 +74,47 @@ namespace acceso
                                 THROW 50006,
                                     'Una donación no requiere un objeto a cambio.', 1;
 
+                            DECLARE @idSolicitud INT;
+
                             INSERT INTO Solicitud
                                 (IdPublicacion,
                                  IdSolicitante,
-                                 ObjetoOfrecido)
+                                 ObjetoOfrecido,
+                                 Estado,
+                                 FechaRespuesta,
+                                 CodigoEntrega)
                             VALUES
                                 (@idPublicacion,
                                  @idSolicitante,
-                                 @objeto);
+                                 @objeto,
+                                 CASE WHEN @modalidad = 0 THEN 1 ELSE 0 END,
+                                 CASE WHEN @modalidad = 0
+                                      THEN SYSUTCDATETIME()
+                                      ELSE NULL END,
+                                 CASE WHEN @modalidad = 0
+                                      THEN @codigoEntrega
+                                      ELSE NULL END);
 
-                            SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                            SET @idSolicitud = CAST(SCOPE_IDENTITY() AS INT);
+
+                            IF @modalidad = 0
+                            BEGIN
+                                UPDATE Publicacion
+                                SET Estado = 1
+                                WHERE IdPublicacion = @idPublicacion;
+                            END;
+
+                            SELECT @idSolicitud;";
 
                         using (SqlCommand comando =
                             new SqlCommand(
                                 consulta, conexion, transaccion))
                         {
+
+                            comando.Parameters.Add(
+                            "@codigoEntrega", SqlDbType.VarChar, 6)
+                            .Value = GenerarCodigoEntrega();
+
                             comando.Parameters.Add(
                                 "@idPublicacion", SqlDbType.Int)
                                 .Value = idPublicacion;
@@ -209,6 +236,7 @@ namespace acceso
             SELECT
                 s.IdSolicitud,
                 s.IdPublicacion,
+                s.CodigoEntrega,
                 p.Titulo,
                 p.Modalidad,
                 s.ObjetoOfrecido,
@@ -218,7 +246,7 @@ namespace acceso
                 s.ConfirmoDuenio,
                 s.ConfirmoSolicitante,
                 s.FechaEntrega,
-                u.Nombre AS NombreUsuario
+                u.Nombre AS NombreUsuario                
             FROM Solicitud s
             INNER JOIN Publicacion p
                 ON p.IdPublicacion = s.IdPublicacion
@@ -293,6 +321,22 @@ namespace acceso
                     ? (DateTime?)null
                     : Convert.ToDateTime(lector["FechaEntrega"]);
 
+            int indiceCodigo;
+
+            try
+            {
+                indiceCodigo = lector.GetOrdinal("CodigoEntrega");
+
+                solicitud.CodigoEntrega =
+                    lector.IsDBNull(indiceCodigo)
+                        ? null
+                        : lector.GetString(indiceCodigo);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                solicitud.CodigoEntrega = null;
+            }
+
 
             return solicitud;
         }
@@ -351,12 +395,13 @@ namespace acceso
                         THROW 50104,
                             'La solicitud ya fue respondida.', 1;
 
-               IF @aceptar = 1
-        BEGIN
-            UPDATE Solicitud
-            SET Estado = 1,
-                FechaRespuesta = SYSUTCDATETIME()
-            WHERE IdSolicitud = @idSolicitud;
+                    IF @aceptar = 1
+                    BEGIN
+                        UPDATE Solicitud
+                        SET Estado = 1,
+                            FechaRespuesta = SYSUTCDATETIME(),
+                            CodigoEntrega = @codigoEntrega
+                        WHERE IdSolicitud = @idSolicitud;
 
             -- Las demás pendientes se rechazan solas (motivo 2: se eligió a otra persona)
             UPDATE Solicitud
@@ -393,6 +438,10 @@ namespace acceso
                             comando.Parameters.Add("@aceptar",
                                 SqlDbType.Bit).Value = aceptar;
 
+                            comando.Parameters.Add("@codigoEntrega",
+                                SqlDbType.VarChar, 6).Value =
+                                aceptar ? GenerarCodigoEntrega() : (object)DBNull.Value;
+
                             comando.ExecuteNonQuery();
                         }
 
@@ -415,7 +464,38 @@ namespace acceso
 
 
 
-        public void ConfirmarEntrega(int idSolicitud, int idUsuario)
+       
+
+
+
+
+        private string GenerarCodigoEntrega()
+        {
+            const string caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            char[] codigo = new char[6];
+
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            {
+                byte[] numeros = new byte[6];
+                rng.GetBytes(numeros);
+
+                for (int i = 0; i < 6; i++)
+                {
+                    codigo[i] = caracteres[numeros[i] % caracteres.Length];
+                }
+            }
+
+            return new string(codigo);
+        }
+
+
+
+
+
+        public void ConfirmarEntregaConCodigo(
+            int idSolicitud,
+            int idDueno,
+            string codigo)
         {
             using (SqlConnection conexion = new SqlConnection(
                 "Data Source=localhost\\SQLEXPRESS;" +
@@ -430,13 +510,11 @@ namespace acceso
                     {
                         string sql = @"
                     DECLARE @idPublicacion INT;
-                    DECLARE @idDueno INT;
-                    DECLARE @idSolicitante INT;
-                    DECLARE @estadoSolicitud TINYINT;
+                    DECLARE @duenoPublicacion INT;
                     DECLARE @estadoPublicacion TINYINT;
-                    DECLARE @confirmoDueno BIT;
-                    DECLARE @confirmoSolicitante BIT;
+                    DECLARE @estadoSolicitud TINYINT;
                     DECLARE @fechaEntrega DATETIME2;
+                    DECLARE @codigoGuardado VARCHAR(6);
 
                     SELECT @idPublicacion = IdPublicacion
                     FROM Solicitud
@@ -446,22 +524,19 @@ namespace acceso
                         THROW 50201, 'La solicitud no existe.', 1;
 
                     SELECT
-                        @idDueno = IdUsuario,
+                        @duenoPublicacion = IdUsuario,
                         @estadoPublicacion = Estado
                     FROM Publicacion WITH (UPDLOCK, HOLDLOCK)
                     WHERE IdPublicacion = @idPublicacion;
 
                     SELECT
-                        @idSolicitante = IdSolicitante,
                         @estadoSolicitud = Estado,
-                        @confirmoDueno = ConfirmoDuenio,
-                        @confirmoSolicitante = ConfirmoSolicitante,
-                        @fechaEntrega = FechaEntrega
+                        @fechaEntrega = FechaEntrega,
+                        @codigoGuardado = CodigoEntrega
                     FROM Solicitud WITH (UPDLOCK, HOLDLOCK)
                     WHERE IdSolicitud = @idSolicitud;
 
-                    IF @idUsuario <> @idDueno
-                       AND @idUsuario <> @idSolicitante
+                    IF @idDueno <> @duenoPublicacion
                         THROW 50202,
                             'No tenés permiso para confirmar esta entrega.', 1;
 
@@ -477,52 +552,35 @@ namespace acceso
                         THROW 50205,
                             'La publicación no está reservada.', 1;
 
-                    IF @idUsuario = @idDueno
-                    BEGIN
-                        IF @confirmoDueno = 1
-                            THROW 50206,
-                                'Ya confirmaste esta entrega.', 1;
+                    IF @codigoGuardado IS NULL
+                       OR @codigoGuardado COLLATE Latin1_General_100_BIN2
+                          <> @codigo COLLATE Latin1_General_100_BIN2
+                        THROW 50207,
+                            'El código de entrega es incorrecto.', 1;
 
-                        UPDATE Solicitud
-                        SET ConfirmoDuenio = 1
-                        WHERE IdSolicitud = @idSolicitud;
-                    END
-                    ELSE
-                    BEGIN
-                        IF @confirmoSolicitante = 1
-                            THROW 50206,
-                                'Ya confirmaste esta entrega.', 1;
+                    UPDATE Solicitud
+                    SET FechaEntrega = SYSUTCDATETIME(),
+                        ConfirmoDuenio = 1,
+                        ConfirmoSolicitante = 1,
+                        CodigoEntrega = NULL
+                    WHERE IdSolicitud = @idSolicitud;
 
-                        UPDATE Solicitud
-                        SET ConfirmoSolicitante = 1
-                        WHERE IdSolicitud = @idSolicitud;
-                    END;
-
-                    IF EXISTS (
-                        SELECT 1
-                        FROM Solicitud
-                        WHERE IdSolicitud = @idSolicitud
-                          AND ConfirmoDuenio = 1
-                          AND ConfirmoSolicitante = 1
-                    )
-                    BEGIN
-                        UPDATE Solicitud
-                        SET FechaEntrega = SYSUTCDATETIME()
-                        WHERE IdSolicitud = @idSolicitud;
-
-                        UPDATE Publicacion
-                        SET Estado = 2
-                        WHERE IdPublicacion = @idPublicacion;
-                    END;";
+                    UPDATE Publicacion
+                    SET Estado = 2
+                    WHERE IdPublicacion = @idPublicacion;
+                ";
 
                         using (SqlCommand comando =
                             new SqlCommand(sql, conexion, transaccion))
                         {
-                            comando.Parameters.Add("@idSolicitud", SqlDbType.Int)
-                                .Value = idSolicitud;
+                            comando.Parameters.Add(
+                                "@idSolicitud", SqlDbType.Int).Value = idSolicitud;
 
-                            comando.Parameters.Add("@idUsuario", SqlDbType.Int)
-                                .Value = idUsuario;
+                            comando.Parameters.Add(
+                                "@idDueno", SqlDbType.Int).Value = idDueno;
+
+                            comando.Parameters.Add(
+                                "@codigo", SqlDbType.VarChar, 6).Value = codigo;
 
                             comando.ExecuteNonQuery();
                         }
@@ -537,11 +595,6 @@ namespace acceso
                 }
             }
         }
-
-
-
-
-
 
 
 
