@@ -140,6 +140,21 @@ namespace negocio
 
 
 
+        public bool RetirarPublicacion(int idPublicacion, int idUsuario)
+        {
+            if (idPublicacion <= 0)
+                throw new NegocioException(
+                    "La publicación seleccionada no es válida.");
+
+            if (idUsuario <= 0)
+                throw new NegocioException(
+                    "El usuario no es válido.");
+
+            return _acceso.RetirarPublicacion(idPublicacion, idUsuario);
+        }
+
+
+
 
 
 

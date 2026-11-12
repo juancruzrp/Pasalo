@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace dominio
     {
         // Los valores coinciden con los TINYINT de la base de datos
-        public enum EstadoPublicacion : byte { Disponible = 0, Reservado = 1, Entregado = 2 }
+        public enum EstadoPublicacion : byte { Disponible = 0, Reservado = 1, Entregado = 2, Retirada = 3 }
 
         public enum ModalidadPublicacion : byte { Donacion = 0, Intercambio = 1 }
 

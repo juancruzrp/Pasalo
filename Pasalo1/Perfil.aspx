@@ -39,6 +39,13 @@
             </div>
         </section>
 
+        <% if (Session["MensajeRetiro"] != null) { %>
+            <div class="panel" role="status">
+                <p><%: Session["MensajeRetiro"].ToString() %></p>
+            </div>
+            <% Session.Remove("MensajeRetiro"); %>
+        <% } %>
+
         <nav class="pestanas" aria-label="Secciones del perfil">
             <a href="Perfil.aspx?tab=publicaciones<%= SufijoId %>"<%= Actual("publicaciones") %>><%= EsPropio ? "Mis publicaciones" : "Publicaciones" %></a>
             <% if (EsPropio) { %>
@@ -63,6 +70,19 @@
                         <p class="suave"><%: TextoPublicacion(p) %><% if (EsPropio && p.SolicitudesPendientes > 0) { %> · <a class="enlace" href="DetallePublicacion.aspx?id=<%= p.Id %>"><%= p.SolicitudesPendientes %> <%= p.SolicitudesPendientes == 1 ? "solicitud" : "solicitudes" %></a><% } %></p>
                     </div>
                     <span class="estado estado--<%= ClaseEstado(p.Estado) %>"><%= TextoEstado(p.Estado) %></span>
+                    <% if (EsPropio &&
+                           p.Estado == dominio.EstadoPublicacion.Disponible &&
+                           p.TotalSolicitudes == 0) { %>
+
+                        <button type="submit"
+                                name="idPublicacionRetirar"
+                                value="<%= p.Id %>"
+                                class="enlace"
+                                onclick="return confirm('¿Querés retirar esta publicación?');">
+                            Retirar publicación
+                        </button>
+
+                    <% } %>
                 </li>
                 <% } %>
             </ul>

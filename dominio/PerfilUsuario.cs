@@ -33,6 +33,7 @@ namespace dominio
         public EstadoPublicacion Estado { get; set; }
         public DateTime FechaPublicacion { get; set; }
         public int SolicitudesPendientes { get; set; }
+        public int TotalSolicitudes { get; set; }
         public string Receptor { get; set; }          // a quien se le acepto la solicitud (si hay)
     }
 

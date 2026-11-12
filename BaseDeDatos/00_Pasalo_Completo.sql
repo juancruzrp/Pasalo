@@ -53,10 +53,60 @@ IF OBJECT_ID(N'Publicacion', N'U') IS NULL
         IdCategoria      INT NOT NULL REFERENCES Categoria(IdCategoria),
         IdCarrera        INT NULL REFERENCES Carrera(IdCarrera),
         Modalidad        TINYINT NOT NULL CHECK (Modalidad IN (0,1)),            -- 0 = Donación, 1 = Intercambio
-        Estado           TINYINT NOT NULL DEFAULT 0 CHECK (Estado IN (0,1,2)),   -- 0 = Disponible, 1 = Reservado, 2 = Entregado
+        Estado TINYINT NOT NULL DEFAULT 0 CONSTRAINT CK_Publicacion_Estado CHECK (Estado IN (0,1,2,3)),
         FechaPublicacion DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
         RowVer           ROWVERSION
     );
+
+-- Actualizar estados permitidos de Publicacion
+-- 0 = Disponible, 1 = Reservado, 2 = Entregado, 3 = Retirada
+
+DECLARE @NombreRestriccion SYSNAME;
+DECLARE @SQL NVARCHAR(MAX);
+
+-- Eliminar restricciones antiguas de Estado,
+-- conservando las que pertenecen a otras columnas.
+DECLARE restricciones CURSOR LOCAL FAST_FORWARD FOR
+SELECT cc.name
+FROM sys.check_constraints cc
+INNER JOIN sys.columns c
+    ON c.object_id = cc.parent_object_id
+   AND c.column_id = cc.parent_column_id
+WHERE cc.parent_object_id = OBJECT_ID(N'dbo.Publicacion')
+  AND c.name = N'Estado'
+  AND cc.name <> N'CK_Publicacion_Estado';
+
+OPEN restricciones;
+
+FETCH NEXT FROM restricciones INTO @NombreRestriccion;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @SQL =
+        N'ALTER TABLE dbo.Publicacion DROP CONSTRAINT '
+        + QUOTENAME(@NombreRestriccion);
+
+    EXEC sp_executesql @SQL;
+
+    FETCH NEXT FROM restricciones INTO @NombreRestriccion;
+END;
+
+CLOSE restricciones;
+DEALLOCATE restricciones;
+
+-- Crear la restricción si todavía no existe.
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.check_constraints
+    WHERE parent_object_id = OBJECT_ID(N'dbo.Publicacion')
+      AND name = N'CK_Publicacion_Estado'
+)
+BEGIN
+    ALTER TABLE dbo.Publicacion
+    ADD CONSTRAINT CK_Publicacion_Estado
+    CHECK (Estado IN (0,1,2,3));
+END;
+
 
 IF OBJECT_ID(N'FotoPublicacion', N'U') IS NULL
     CREATE TABLE FotoPublicacion (

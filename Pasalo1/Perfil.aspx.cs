@@ -36,6 +36,39 @@ namespace Pasalo1
                     return;
                 }
 
+                // Procesar el retiro de una publicación
+                if (Request.HttpMethod == "POST")
+                {
+                    string idEnviado = Request.Form["idPublicacionRetirar"];
+                    int idPublicacion;
+
+                    if (!string.IsNullOrEmpty(idEnviado))
+                    {
+                        if (int.TryParse(idEnviado, out idPublicacion) && idPublicacion > 0)
+                        {
+                            PublicacionNegocio publicacionNegocio = new PublicacionNegocio();
+
+                            bool retirada = publicacionNegocio.RetirarPublicacion(
+                                idPublicacion,
+                                logueado.IdUsuario
+                            );
+
+                            if (retirada)
+                                Session["MensajeRetiro"] = "La publicación fue retirada correctamente.";
+                            else
+                                Session["MensajeRetiro"] = "No se pudo retirar la publicación. Verificá que esté disponible y no tenga solicitudes.";
+                        }
+                        else
+                        {
+                            Session["MensajeRetiro"] = "La publicación seleccionada no es válida.";
+                        }
+
+                        Response.Redirect("Perfil.aspx?tab=publicaciones", false);
+                        Context.ApplicationInstance.CompleteRequest();
+                        return;
+                    }
+                }
+
                 // ?id=5 muestra el perfil de otra persona; sin id (o el propio) es "Mi perfil"
                 int idPedido;
                 int idMostrar = logueado.IdUsuario;
@@ -74,6 +107,7 @@ namespace Pasalo1
                 Response.Redirect("Error.aspx", false);
                 Context.ApplicationInstance.CompleteRequest();
             }
+            
         }
 
         // Devuelve el atributo que marca la pestaña actual (lo lee el lector de pantalla)
@@ -147,6 +181,7 @@ namespace Pasalo1
         {
             if (estado == EstadoPublicacion.Reservado) return "reservado";
             if (estado == EstadoPublicacion.Entregado) return "entregado";
+            if (estado == EstadoPublicacion.Retirada) return "retirada";
             return "disponible";
         }
 
@@ -154,6 +189,7 @@ namespace Pasalo1
         {
             if (estado == EstadoPublicacion.Reservado) return "Reservado";
             if (estado == EstadoPublicacion.Entregado) return "Entregado";
+            if (estado == EstadoPublicacion.Retirada) return "Retirada";
             return "Disponible";
         }
 

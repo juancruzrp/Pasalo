@@ -296,6 +296,70 @@ namespace acceso
 
 
 
+        public bool RetirarPublicacion(int idPublicacion, int idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.SetearConsulta(@"
+            SET XACT_ABORT ON;
+
+            BEGIN TRY
+                BEGIN TRANSACTION;
+
+                DECLARE @estado TINYINT;
+
+                SELECT @estado = Estado
+                FROM Publicacion WITH (UPDLOCK, HOLDLOCK)
+                WHERE IdPublicacion = @idPublicacion
+                  AND IdUsuario = @idUsuario;
+
+                IF @estado = 0
+                   AND NOT EXISTS (
+                       SELECT 1
+                       FROM Solicitud
+                       WHERE IdPublicacion = @idPublicacion
+                   )
+                BEGIN
+                    UPDATE Publicacion
+                    SET Estado = 3
+                    WHERE IdPublicacion = @idPublicacion
+                      AND IdUsuario = @idUsuario
+                      AND Estado = 0;
+
+                    COMMIT TRANSACTION;
+                    SELECT CAST(1 AS INT);
+                END
+                ELSE
+                BEGIN
+                    COMMIT TRANSACTION;
+                    SELECT CAST(0 AS INT);
+                END
+            END TRY
+            BEGIN CATCH
+                IF @@TRANCOUNT > 0
+                    ROLLBACK TRANSACTION;
+
+                THROW;
+            END CATCH;
+        ");
+
+                datos.SetearParametro("@idPublicacion", idPublicacion);
+                datos.SetearParametro("@idUsuario", idUsuario);
+
+                return Convert.ToInt32(datos.EjecutarScalar()) == 1;
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+
+
+
+
 
 
 

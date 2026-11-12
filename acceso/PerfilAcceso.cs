@@ -100,6 +100,7 @@ namespace acceso
                 datos.SetearConsulta(
                     "SELECT p.IdPublicacion, p.Titulo, p.Modalidad, p.Estado, p.FechaPublicacion, c.Nombre AS Categoria, " +
                     "(SELECT COUNT(*) FROM Solicitud s WHERE s.IdPublicacion = p.IdPublicacion AND s.Estado = 0) AS Pendientes, " +
+                    "(SELECT COUNT(*) FROM Solicitud s WHERE s.IdPublicacion = p.IdPublicacion) AS TotalSolicitudes, " +
                     "(SELECT TOP 1 u2.Nombre FROM Solicitud s2 INNER JOIN Usuario u2 ON u2.IdUsuario = s2.IdSolicitante " +
                     "   WHERE s2.IdPublicacion = p.IdPublicacion AND s2.Estado = 1) AS Receptor " +
                     "FROM Publicacion p INNER JOIN Categoria c ON c.IdCategoria = p.IdCategoria " +
@@ -119,6 +120,7 @@ namespace acceso
                     p.Estado = (EstadoPublicacion)(byte)datos.Lector["Estado"];
                     p.FechaPublicacion = (DateTime)datos.Lector["FechaPublicacion"];
                     p.SolicitudesPendientes = (int)datos.Lector["Pendientes"];
+                    p.TotalSolicitudes = (int)datos.Lector["TotalSolicitudes"];
                     p.Receptor = datos.Lector["Receptor"] is DBNull ? null : (string)datos.Lector["Receptor"];
                     lista.Add(p);
                 }
