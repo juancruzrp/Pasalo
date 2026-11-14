@@ -1315,3 +1315,15 @@ h1, h2, h3, p {
 .mod-editor { margin-bottom: 18px; }
 .mod-editor h3 { margin-bottom: 10px; color: var(--color-principal); }
 .mod-editor .mod-acciones { margin-top: 6px; }
+
+/* Solicitud cancelada: gris + barra horizontal */
+.actividad-estado.cancelada {
+    background: #eceff0;
+    color: #55656b;
+}
+
+    .actividad-estado.cancelada::before {
+        width: 12px;
+        height: 4px;
+        border-radius: 2px;
+    }

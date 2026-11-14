@@ -45,6 +45,9 @@ namespace Pasalo1
 
             if (tab == "enviadas")
                 TabActiva = "enviadas";
+            // Libera los intercambios que llevan más de 10 días sin entregarse
+            try { new SolicitudNegocio().VencerInactivas(); }
+            catch (Exception) { /* si falla, la página sigue funcionando */ }
 
             try
             {
@@ -113,6 +116,9 @@ namespace Pasalo1
 
                 case EstadoSolicitud.Rechazada:
                     return "rechazada";
+
+                case EstadoSolicitud.Cancelada:
+                    return "cancelada";
 
                 default:
                     return "pendiente";
@@ -246,7 +252,49 @@ namespace Pasalo1
 
 
 
+        // Lo usa la pantalla para decir "Cancelaste..." o "Fulano canceló..."
+        protected int UsuarioActualId
+        {
+            get
+            {
+                dominio.Usuario u = Session["Usuario"] as dominio.Usuario;
+                return u == null ? 0 : u.IdUsuario;
+            }
+        }
 
+        protected void btnCancelar_Click(object sender, EventArgs e)
+        {
+            dominio.Usuario usuario = Session["Usuario"] as dominio.Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx", false);
+                Context.ApplicationInstance.CompleteRequest();
+                return;
+            }
+
+            Button boton = sender as Button;
+            int idSolicitud;
+
+            if (boton == null || !int.TryParse(boton.CommandArgument, out idSolicitud))
+                return;
+
+            try
+            {
+                new SolicitudNegocio().Cancelar(idSolicitud, usuario.IdUsuario);
+
+                Response.Redirect("MiActividad.aspx?tab=" + TabActiva, false);
+                Context.ApplicationInstance.CompleteRequest();
+            }
+            catch (NegocioException ex)
+            {
+                MostrarError(ex.Message);
+            }
+            catch (Exception)
+            {
+                MostrarError("No se pudo cancelar el intercambio. Intentá nuevamente.");
+            }
+        }
 
 
 

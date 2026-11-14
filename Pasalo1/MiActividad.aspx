@@ -392,7 +392,7 @@
                                     OnClientClick="return confirm('¿Querés aceptar esta solicitud? Las demás solicitudes pendientes de este artículo serán rechazadas automáticamente.');"
                                     CssClass="actividad-btn-aceptar" />
 
-                                <asp:Button ID="btnRechazar"
+                                   <asp:Button ID="btnRechazar"
                                     runat="server"
                                     Text="Rechazar"
                                     CommandArgument='<%# Eval("IdSolicitud") %>'
@@ -402,15 +402,32 @@
 
                             </asp:Panel>
 
-                            <asp:Panel runat="server"
-                                Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
-                                CssClass="actividad-acciones">
-                                <a class="actividad-btn-aceptar"
-                                    style="text-decoration:none;display:inline-block;"
-                                    href='Chat.aspx?id=<%# Eval("IdSolicitud") %>'>
-                                    <i class="ti ti-messages" aria-hidden="true"></i> Abrir chat
-                                </a>
-                            </asp:Panel>
+                            <%-- Aviso cuando el intercambio fue cancelado --%>
+<asp:Panel runat="server"
+    Visible='<%# Convert.ToInt32(Eval("Estado")) == 3 %>'
+    CssClass="actividad-aviso">
+    <i class="ti ti-ban" aria-hidden="true"></i>
+    <span><%#: ((dominio.SolicitudListado)Container.DataItem).MensajeCancelacion(UsuarioActualId) %></span>
+</asp:Panel>
+
+<asp:Panel runat="server"
+    Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
+    CssClass="actividad-acciones">
+    <a class="actividad-btn-aceptar"
+        style="text-decoration:none;display:inline-block;"
+        href='Chat.aspx?id=<%# Eval("IdSolicitud") %>'>
+        <i class="ti ti-messages" aria-hidden="true"></i> Abrir chat
+    </a>
+
+    <asp:Button runat="server"
+        ID="btnCancelarIntercambio"
+        Text="Cancelar intercambio"
+        CommandArgument='<%# Eval("IdSolicitud") %>'
+        OnClick="btnCancelar_Click"
+        OnClientClick="return confirm('¿Seguro que querés cancelar este intercambio? El artículo va a volver a estar disponible.');"
+        Visible='<%# !Convert.ToBoolean(Eval("EntregaFinalizada")) %>'
+        CssClass="actividad-btn-rechazar" />
+</asp:Panel>
 
                             <asp:Panel runat="server"
                                 Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 && !Convert.ToBoolean(Eval("EntregaFinalizada")) %>'
@@ -537,15 +554,32 @@
                                 <span><%#: Eval("MensajeSolicitante") %></span>
                             </asp:Panel>
 
-                            <asp:Panel runat="server"
-                                Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
-                                CssClass="actividad-acciones">
-                                <a class="actividad-btn-aceptar"
-                                    style="text-decoration:none;display:inline-block;"
-                                    href='Chat.aspx?id=<%# Eval("IdSolicitud") %>'>
-                                    <i class="ti ti-messages" aria-hidden="true"></i> Abrir chat
-                                </a>
-                            </asp:Panel>
+                            <%-- Aviso cuando el intercambio fue cancelado --%>
+<asp:Panel runat="server"
+    Visible='<%# Convert.ToInt32(Eval("Estado")) == 3 %>'
+    CssClass="actividad-aviso">
+    <i class="ti ti-ban" aria-hidden="true"></i>
+    <span><%#: ((dominio.SolicitudListado)Container.DataItem).MensajeCancelacion(UsuarioActualId) %></span>
+</asp:Panel>
+
+<asp:Panel runat="server"
+    Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
+    CssClass="actividad-acciones">
+    <a class="actividad-btn-aceptar"
+        style="text-decoration:none;display:inline-block;"
+        href='Chat.aspx?id=<%# Eval("IdSolicitud") %>'>
+        <i class="ti ti-messages" aria-hidden="true"></i> Abrir chat
+    </a>
+
+    <asp:Button runat="server"
+        ID="btnCancelarIntercambio"
+        Text="Cancelar intercambio"
+        CommandArgument='<%# Eval("IdSolicitud") %>'
+        OnClick="btnCancelar_Click"
+        OnClientClick="return confirm('¿Seguro que querés cancelar este intercambio? El artículo va a volver a estar disponible.');"
+        Visible='<%# !Convert.ToBoolean(Eval("EntregaFinalizada")) %>'
+        CssClass="actividad-btn-rechazar" />
+</asp:Panel>
 
 
                                 

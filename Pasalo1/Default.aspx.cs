@@ -18,6 +18,10 @@ namespace Pasalo1
         {
             if (!IsPostBack)
             {
+                // Libera los intercambios que llevan más de 10 días sin entregarse
+                try { new SolicitudNegocio().VencerInactivas(); }
+                catch (Exception) { /* si falla, el catálogo sigue funcionando */ }
+
                 try
                 {
                     CargarFiltros();

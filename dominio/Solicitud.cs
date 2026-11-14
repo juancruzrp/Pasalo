@@ -11,7 +11,8 @@ namespace dominio
     {
         Pendiente = 0,
         Aceptada = 1,
-        Rechazada = 2
+        Rechazada = 2,
+        Cancelada = 3
     }
 
     public class Solicitud
@@ -40,6 +41,25 @@ namespace dominio
         public DateTime FechaSolicitud { get; set; }
         public string CodigoEntrega { get; set; }
 
+        public const int DiasPlazoEntrega = 10;
+
+        public int? MotivoCancelacion { get; set; }   // 1 = una de las partes, 2 = venció el plazo
+        public int? IdCancelo { get; set; }
+
+        public string MensajeCancelacion(int idUsuarioActual)
+        {
+            if (Estado != EstadoSolicitud.Cancelada) return null;
+
+            if (MotivoCancelacion == 2)
+                return "Se canceló automáticamente: pasaron " + DiasPlazoEntrega +
+                       " días sin confirmar la entrega.";
+
+            if (IdCancelo == idUsuarioActual)
+                return "Cancelaste este intercambio.";
+
+            return NombreUsuario + " canceló el intercambio.";
+        }
+
         public string EstadoTexto
         {
             get
@@ -51,6 +71,9 @@ namespace dominio
 
                     case EstadoSolicitud.Rechazada:
                         return "Rechazada";
+
+                    case EstadoSolicitud.Cancelada:
+                        return "Cancelada";
 
                     default:
                         return "Pendiente";
@@ -131,7 +154,6 @@ namespace dominio
 
 
     }
-
 
 
 }

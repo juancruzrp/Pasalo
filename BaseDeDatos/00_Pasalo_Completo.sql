@@ -314,3 +314,71 @@ SELECT
     (SELECT COUNT(*) FROM Facultad)                     AS Facultades,
     COL_LENGTH(N'Publicacion', N'Suspendida')           AS ColSuspendida;
 GO
+-- ---------------------------------------------------------------------
+-- 7) Cancelación de intercambios (manual o por vencimiento de 10 días)
+--     Solicitud.Estado = 3 (Cancelada)
+-- ---------------------------------------------------------------------
+IF COL_LENGTH(N'Solicitud', N'FechaCancelacion') IS NULL
+    ALTER TABLE Solicitud ADD FechaCancelacion DATETIME2 NULL;
+
+-- 1 = canceló una de las partes, 2 = venció el plazo
+IF COL_LENGTH(N'Solicitud', N'MotivoCancelacion') IS NULL
+    ALTER TABLE Solicitud ADD MotivoCancelacion TINYINT NULL;
+
+-- Quién canceló (NULL si fue automática)
+IF COL_LENGTH(N'Solicitud', N'IdCancelo') IS NULL
+    ALTER TABLE Solicitud ADD IdCancelo INT NULL
+        CONSTRAINT FK_Solicitud_Cancelo REFERENCES Usuario(IdUsuario);
+
+-- 0 = la otra persona todavía no vio el aviso
+IF COL_LENGTH(N'Solicitud', N'CancelacionVista') IS NULL
+    ALTER TABLE Solicitud ADD CancelacionVista BIT NOT NULL
+        CONSTRAINT DF_Solicitud_CancelacionVista DEFAULT 1;
+GO
+
+-- El estado 3 pasa a ser válido (se reemplaza el CHECK anterior)
+DECLARE @RestriccionSolicitud SYSNAME;
+DECLARE @SQLSolicitud NVARCHAR(MAX);
+
+DECLARE restriccionesSolicitud CURSOR LOCAL FAST_FORWARD FOR
+SELECT cc.name
+FROM sys.check_constraints cc
+INNER JOIN sys.columns c
+    ON c.object_id = cc.parent_object_id
+   AND c.column_id = cc.parent_column_id
+WHERE cc.parent_object_id = OBJECT_ID(N'dbo.Solicitud')
+  AND c.name = N'Estado'
+  AND cc.name <> N'CK_Solicitud_Estado';
+
+OPEN restriccionesSolicitud;
+FETCH NEXT FROM restriccionesSolicitud INTO @RestriccionSolicitud;
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @SQLSolicitud = N'ALTER TABLE dbo.Solicitud DROP CONSTRAINT ' + QUOTENAME(@RestriccionSolicitud);
+    EXEC sp_executesql @SQLSolicitud;
+    FETCH NEXT FROM restriccionesSolicitud INTO @RestriccionSolicitud;
+END;
+CLOSE restriccionesSolicitud;
+DEALLOCATE restriccionesSolicitud;
+
+IF NOT EXISTS (
+    SELECT 1 FROM sys.check_constraints
+    WHERE parent_object_id = OBJECT_ID(N'dbo.Solicitud')
+      AND name = N'CK_Solicitud_Estado'
+)
+    ALTER TABLE dbo.Solicitud
+    ADD CONSTRAINT CK_Solicitud_Estado CHECK (Estado IN (0,1,2,3));
+GO
+
+-- Se puede volver a pedir un objeto cuyo intercambio se canceló
+IF EXISTS (SELECT 1 FROM sys.key_constraints
+           WHERE name = N'UQ_Solicitud_Publicacion_Solicitante'
+             AND parent_object_id = OBJECT_ID(N'dbo.Solicitud'))
+    ALTER TABLE dbo.Solicitud DROP CONSTRAINT UQ_Solicitud_Publicacion_Solicitante;
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes
+               WHERE name = N'UX_Solicitud_PedidoUnico'
+                 AND object_id = OBJECT_ID(N'dbo.Solicitud'))
+    CREATE UNIQUE INDEX UX_Solicitud_PedidoUnico
+        ON dbo.Solicitud (IdPublicacion, IdSolicitante) WHERE Estado <> 3;
+GO

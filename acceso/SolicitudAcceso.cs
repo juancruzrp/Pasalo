@@ -61,6 +61,7 @@ namespace acceso
                                 FROM Solicitud
                                 WHERE IdPublicacion = @idPublicacion
                                   AND IdSolicitante = @idSolicitante
+                                AND Estado <> 3 
                             )
                                 THROW 50004,
                                     'Ya enviaste una solicitud para este artículo.', 1;
@@ -155,7 +156,8 @@ namespace acceso
                     SELECT COUNT(*)
                     FROM Solicitud
                     WHERE IdPublicacion = @idPublicacion
-                      AND IdSolicitante = @idSolicitante");
+                      AND IdSolicitante = @idSolicitante
+                      AND Estado <> 3");
 
                 datos.SetearParametro(
                     "@idPublicacion", idPublicacion);
@@ -196,6 +198,8 @@ namespace acceso
                 s.ConfirmoDuenio,
                 s.ConfirmoSolicitante,
                 s.FechaEntrega,
+                s.MotivoCancelacion,
+                s.IdCancelo,
                 u.Nombre AS NombreUsuario
             FROM Solicitud s
             INNER JOIN Publicacion p
@@ -246,6 +250,8 @@ namespace acceso
                 s.ConfirmoDuenio,
                 s.ConfirmoSolicitante,
                 s.FechaEntrega,
+                s.MotivoCancelacion,
+                s.IdCancelo,
                 u.Nombre AS NombreUsuario                
             FROM Solicitud s
             INNER JOIN Publicacion p
@@ -320,6 +326,16 @@ namespace acceso
                 lector["FechaEntrega"] == DBNull.Value
                     ? (DateTime?)null
                     : Convert.ToDateTime(lector["FechaEntrega"]);
+
+                    solicitud.MotivoCancelacion =
+            lector["MotivoCancelacion"] == DBNull.Value
+                ? (int?)null
+                : Convert.ToInt32(lector["MotivoCancelacion"]);
+
+                    solicitud.IdCancelo =
+                lector["IdCancelo"] == DBNull.Value
+                    ? (int?)null
+                    : Convert.ToInt32(lector["IdCancelo"]);
 
             int indiceCodigo;
 
@@ -458,17 +474,6 @@ namespace acceso
 
 
 
-
-
-
-
-
-
-       
-
-
-
-
         private string GenerarCodigoEntrega()
         {
             const string caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -487,9 +492,6 @@ namespace acceso
 
             return new string(codigo);
         }
-
-
-
 
 
         public void ConfirmarEntregaConCodigo(
@@ -598,7 +600,119 @@ namespace acceso
 
 
 
+        // Cancela un intercambio aceptado y libera la publicación.
+     
+        public void Cancelar(int idSolicitud, int idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
 
+            try
+            {
+                datos.SetearConsulta(@"
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
+
+                    DECLARE @idPublicacion INT;
+                    DECLARE @idSolicitante INT;
+                    DECLARE @dueno INT;
+                    DECLARE @estado TINYINT;
+                    DECLARE @fechaEntrega DATETIME2;
+
+                    SELECT @idPublicacion = IdPublicacion,
+                           @idSolicitante = IdSolicitante
+                    FROM Solicitud
+                    WHERE IdSolicitud = @idSolicitud;
+
+                    IF @idPublicacion IS NULL
+                        THROW 50301, 'La solicitud no existe.', 1;
+
+                    SELECT @dueno = IdUsuario
+                    FROM Publicacion WITH (UPDLOCK, HOLDLOCK)
+                    WHERE IdPublicacion = @idPublicacion;
+
+                    IF @idUsuario <> @dueno AND @idUsuario <> @idSolicitante
+                        THROW 50302, 'No tenés permiso para cancelar este intercambio.', 1;
+
+                    SELECT @estado = Estado, @fechaEntrega = FechaEntrega
+                    FROM Solicitud WITH (UPDLOCK, HOLDLOCK)
+                    WHERE IdSolicitud = @idSolicitud;
+
+                    IF @estado <> 1
+                        THROW 50303, 'Solo se puede cancelar un intercambio aceptado.', 1;
+
+                    IF @fechaEntrega IS NOT NULL
+                        THROW 50304, 'La entrega ya fue completada.', 1;
+
+                    UPDATE Solicitud
+                    SET Estado = 3,
+                        FechaCancelacion = SYSUTCDATETIME(),
+                        MotivoCancelacion = 1,
+                        IdCancelo = @idUsuario,
+                        CancelacionVista = 0,
+                        CodigoEntrega = NULL
+                    WHERE IdSolicitud = @idSolicitud;
+
+                    UPDATE Publicacion
+                    SET Estado = 0
+                    WHERE IdPublicacion = @idPublicacion
+                      AND Estado = 1;
+
+                    COMMIT TRANSACTION;");
+
+                datos.SetearParametro("@idSolicitud", idSolicitud);
+                datos.SetearParametro("@idUsuario", idUsuario);
+                datos.EjecutarAccion();
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
+
+        // Cancela los intercambios aceptados que llevan más de N días sin entregarse.
+        // Devuelve cuántos canceló.
+        public int VencerInactivas(int dias)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.SetearConsulta(@"
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
+
+                    DECLARE @vencidas TABLE (IdSolicitud INT, IdPublicacion INT);
+
+                    UPDATE Solicitud
+                    SET Estado = 3,
+                        FechaCancelacion = SYSUTCDATETIME(),
+                        MotivoCancelacion = 2,
+                        IdCancelo = NULL,
+                        CancelacionVista = 0,
+                        CodigoEntrega = NULL
+                    OUTPUT inserted.IdSolicitud, inserted.IdPublicacion INTO @vencidas
+                    WHERE Estado = 1
+                      AND FechaEntrega IS NULL
+                      AND FechaRespuesta IS NOT NULL
+                      AND FechaRespuesta < DATEADD(DAY, -@dias, SYSUTCDATETIME());
+
+                    UPDATE p
+                    SET p.Estado = 0
+                    FROM Publicacion p
+                    INNER JOIN @vencidas v ON v.IdPublicacion = p.IdPublicacion
+                    WHERE p.Estado = 1;
+
+                    COMMIT TRANSACTION;
+                    SELECT COUNT(*) FROM @vencidas;");
+
+                datos.SetearParametro("@dias", dias);
+                return Convert.ToInt32(datos.EjecutarScalar());
+            }
+            finally
+            {
+                datos.CerrarConexion();
+            }
+        }
 
 
 

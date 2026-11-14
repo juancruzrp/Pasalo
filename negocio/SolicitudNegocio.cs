@@ -171,7 +171,30 @@ namespace negocio
 
 
 
+        public void Cancelar(int idSolicitud, int idUsuario)
+        {
+            if (idSolicitud <= 0 || idUsuario <= 0)
+                throw new NegocioException(
+                    "Los datos de la solicitud no son válidos.");
 
+            try
+            {
+                acceso.Cancelar(idSolicitud, idUsuario);
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Number >= 50301 && ex.Number <= 50304)
+                    throw new NegocioException(ex.Message);
+
+                throw;
+            }
+        }
+
+        // Se llama al entrar al catálogo y a Mi actividad: libera lo que venció.
+        public int VencerInactivas()
+        {
+            return acceso.VencerInactivas(SolicitudListado.DiasPlazoEntrega);
+        }
 
 
 
