@@ -41,11 +41,7 @@
                 PÁSALO
             </a>
 
-            <div class="buscador">
-                <asp:Label ID="lblBuscar" runat="server" AssociatedControlID="txtBuscar" CssClass="solo-lectores" Text="Buscar objetos" />
-                <i class="ti ti-search" aria-hidden="true"></i>
-                <asp:TextBox ID="txtBuscar" runat="server" placeholder="Buscar libros, apuntes, calculadoras…" />
-            </div>
+           
 
             <nav class="menu" aria-label="Principal">
                     <a href="Default.aspx"<%= (Request.Path.EndsWith("Default.aspx", StringComparison.OrdinalIgnoreCase) || Request.Path.IndexOf("DetallePublicacion", StringComparison.OrdinalIgnoreCase) >= 0) ? " aria-current=\"page\"" : "" %>>Catálogo</a>
