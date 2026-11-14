@@ -264,7 +264,13 @@
             margin-right: 10px;
         }
 
-
+        .actividad-entrega-completada {
+                padding: 10px 14px;
+                margin-top: 12px;
+        }
+        .actividad-entrega-completada p {
+                font-size: 13px;
+        }
 
     </style>
 
@@ -433,15 +439,14 @@
                             </asp:Panel>
 
                             <asp:Panel runat="server"
-                                Visible='<%# Convert.ToBoolean(Eval("EntregaFinalizada")) %>'>
-
-                                <a class="actividad-btn-calificar"
-                                   href='Calificar.aspx?id=<%# Eval("IdSolicitud") %>'>
-                                    <i class="ti ti-star" aria-hidden="true"></i>
-                                    Calificar usuario
-                                </a>
-
-                            </asp:Panel>
+                                    Visible='<%# Convert.ToBoolean(Eval("EntregaFinalizada")) %>'
+                                    CssClass="actividad-entrega actividad-entrega-completada">
+                                    <p style="margin:0;">
+                                        <i class="ti ti-circle-check" aria-hidden="true"></i>
+                                        <strong>Entrega confirmada</strong>
+                                        el <%# Eval("FechaEntrega", "{0:dd/MM/yyyy HH:mm}") %>.
+                                    </p>
+                                </asp:Panel>
 
                         </article>
 
@@ -542,23 +547,35 @@
                                 </a>
                             </asp:Panel>
 
-                            <asp:Panel runat="server"
-                                Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 %>'
-                                CssClass="actividad-entrega">
 
                                 
-                                <asp:Panel runat="server"
-                                 Visible='<%# !string.IsNullOrEmpty(Convert.ToString(Eval("CodigoEntrega"))) && !Convert.ToBoolean(Eval("EntregaFinalizada")) %>'>
+                                <%-- Entrega pendiente: muestra el código --%>
+                                    <asp:Panel runat="server"
+                                        Visible='<%# Convert.ToInt32(Eval("Estado")) == 1 && !Convert.ToBoolean(Eval("EntregaFinalizada")) && !string.IsNullOrEmpty(Convert.ToString(Eval("CodigoEntrega"))) %>'
+                                        CssClass="actividad-entrega">
 
-                                    <strong style="font-size:24px; letter-spacing:3px; color:#28666d;">
-                                        <%#: Eval("CodigoEntrega") %>
-                                    </strong>
+                                        <strong style="font-size:24px; letter-spacing:3px; color:#28666d;">
+                                            <%#: Eval("CodigoEntrega") %>
+                                        </strong>
 
-                                    <p>Mostrale este código al dueño cuando recibas el artículo.</p>
+                                        <p>Mostrale este código al dueño cuando recibas el artículo.</p>
 
-                                </asp:Panel>
+                                    </asp:Panel>
 
-                            </asp:Panel>
+                                    <%-- Entrega finalizada: aviso de confirmación --%>
+                                    <asp:Panel runat="server"
+                                        Visible='<%# Convert.ToBoolean(Eval("EntregaFinalizada")) %>'
+                                        CssClass="actividad-entrega actividad-entrega-completada">
+
+                                        <p style="margin:0;">
+                                            <i class="ti ti-circle-check" aria-hidden="true"></i>
+                                            <strong>Entrega confirmada</strong>
+                                            el <%# Eval("FechaEntrega", "{0:dd/MM/yyyy HH:mm}") %>.
+                                            ¡Gracias por usar PÁSALO!
+                                        </p>
+
+                                    </asp:Panel>
+
 
                             <asp:Panel runat="server"
                                 Visible='<%# Convert.ToBoolean(Eval("EntregaFinalizada")) %>'>
